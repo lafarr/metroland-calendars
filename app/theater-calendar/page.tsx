@@ -7,6 +7,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styles.css';
 import { useRouter } from 'next/navigation';
+import Dropdown from '../lib/Dropdown';
 
 const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	const [selectedDate, setSelectedDate] = useState<any>(new Date());
@@ -215,12 +216,13 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 	)
 }
 
-export default function ArtCalendar() {
+export default function TheaterCalendar() {
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => { setReady(true); }, []);
 	return (
 		<>
+			<Dropdown current={'Theater'} />
 			<div className="min-h-screen">
 				{ready && <><DesktopCalendar customClasses={"hidden md:block"} />
 					<MobileCalendar customClasses={"md:hidden"} /></>}
