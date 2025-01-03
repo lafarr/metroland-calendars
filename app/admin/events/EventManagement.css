@@ -1,0 +1,281 @@
+/* Event Management Container */
+.event-management-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+}
+
+/* Controls Section */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.filter-controls input {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.5rem;
+  border: 1px solid lightgray;
+  color: lightgray;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  background-color: #201f1f;
+}
+
+/* Button Styles */
+.button-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.button-group button,
+.event-card .edit-button,
+.event-card .delete-button,
+.add-event-button {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 100px;
+}
+
+.save-button,
+.add-event-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.save-button:hover,
+.add-event-button:hover {
+  background-color: #45a049;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.3);
+}
+
+.cancel-button,
+.event-card .delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.cancel-button:hover,
+.event-card .delete-button:hover {
+  background-color: #d32f2f;
+  box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+}
+
+.event-card .edit-button {
+  background-color: #2196F3;
+  color: white;
+}
+
+.event-card .edit-button:hover {
+  background-color: #1976D2;
+  box-shadow: 0 4px 8px rgba(33, 150, 243, 0.3);
+}
+
+/* Event Grid */
+.event-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* Event Card Styles */
+.event-card {
+  background-color: #201f1f;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+}
+
+.event-date, .event-venue, .event-town, .event-link {
+  font-style: italic;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  width: 90%;
+  word-break: break-all;
+  margin-top: auto;
+}
+
+.event-link:hover {
+	cursor: pointer;
+	opacity: .8;
+}
+
+.event-card p:last-of-type {
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+/* Form Styles */
+.add-event-form {
+  background-color: #201f1f;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-event-form input,
+.add-event-form textarea,
+.event-card.editing input,
+.event-card.editing textarea {
+    background-color: #2a2727;
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  color: lightgray;
+}
+
+.add-event-form input:focus,
+.add-event-form textarea:focus,
+.event-card.editing input:focus,
+.event-card.editing textarea:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Error Message Styles */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #FEE2E2;
+  border: 1px solid #FECACA;
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: #DC2626;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.error-message svg {
+  flex-shrink: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+  .controls {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .add-event-button {
+    width: auto;
+  }
+
+  .filter-controls {
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .filter-controls input {
+    max-width: 200px;
+  }
+}
+
+/* ... (previous styles remain unchanged) ... */
+
+/* Enhanced Edit Form Styles */
+.event-card.editing {
+  background-color: #201f1f;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.event-card.editing input,
+.event-card.editing textarea {
+  width: 90%;
+  margin: auto;
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  margin-bottom: 0.75rem;
+}
+
+.event-card.editing input:focus,
+.event-card.editing textarea:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25);
+}
+
+.event-card.editing label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: lightgray;
+}
+
+.event-card.editing textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.event-card.editing .button-group {
+  margin-top: 1rem;
+}
+
+.event-card.editing .save-button,
+.event-card.editing .cancel-button {
+  padding: 0.75rem 1.5rem;
+}
+
+/* ... (rest of the styles remain unchanged) ... */
+
