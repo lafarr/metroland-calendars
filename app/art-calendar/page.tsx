@@ -136,9 +136,21 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 	);
 
 	const CustomMonthDateHeader = ({ date }: any) => (
-		<div style={{ fontSize: '16px', color: '#faff00', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }} className="custom-date-header">
-			<span onClick={() => router.push(`/events/${moment(currentDate).format('MM').length === 2 && moment(currentDate).format('MM').startsWith('0') ? moment(currentDate).format('MM').charAt(1) : moment(currentDate).format('MM')}-${date.getDate()}-${moment(currentDate).format('YYYY')}?eventType=art`)} className="month-name">{date.getDate()}</span>
-		</div>
+		<div style={{ fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }} className="custom-date-header">
+			<span className="rbc-button-link" onClick={() => {
+				date = new Date(date);
+				let month = (date.getMonth() + 1).toString();
+				if (month.startsWith('0') && month.length === 2) {
+					month = month.substring(1);
+				}
+				let dayOfMonth = date.getDate().toString();
+				if (dayOfMonth.startsWith('0') && dayOfMonth.length === 2) {
+					dayOfMonth = dayOfMonth.substring(1);
+				}
+				const year = date.getFullYear().toString();
+				router.push(`/events/${month}-${dayOfMonth}-${year}?eventType=art`);
+			}}>{date.getDate()}</span>
+		</div >
 	);
 
 	const CustomToolbar = () => (
@@ -166,8 +178,8 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 					tmpE.title = `${e.title} hosted by ${e.organizer}`;
 					const [startMonth, startDay, startYear] = tmpE.start.split("/");
 					const [endMonth, endDay, endYear] = tmpE.end.split("/");
-					tmpE.start = new Date(parseInt('20' + startYear), parseInt(startMonth), parseInt(startDay));
-					tmpE.end = new Date(parseInt('20' + endYear), parseInt(endMonth), parseInt(endDay));
+					tmpE.start = new Date(parseInt('20' + startYear), parseInt(startMonth) - 1, parseInt(startDay));
+					tmpE.end = new Date(parseInt('20' + endYear), parseInt(endMonth) - 1, parseInt(endDay));
 					realEvents.push(tmpE);
 				}
 				setRealEvents(realEvents.filter((e: any) => e.title.toLowerCase().includes(searchQuery)));

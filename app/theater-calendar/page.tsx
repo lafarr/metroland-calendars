@@ -137,10 +137,22 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 		</div>
 	);
 
-	const CustomMonthDateHeader = ({ date }: any) => (
-		<div style={{ fontSize: '16px', color: '#faff00', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }} className="custom-date-header">
-			<span onClick={() => router.push(`/events/${moment(currentDate).format('MM').length === 2 && moment(currentDate).format('MM').startsWith('0') ? moment(currentDate).format('MM').charAt(1) : moment(currentDate).format('MM')}-${date.getDate()}-${moment(currentDate).format('YYYY')}?eventType=art`)} className="month-name">{date.getDate()}</span>
-		</div>
+	const CustomMonthDateHeader = ({ date }: { date: any }) => (
+		<div style={{ fontSize: '16px', fontWeight: 'bold', textAlign: 'right', cursor: 'pointer' }} className="custom-date-header">
+			<span className="rbc-button-link cursor-pointer" onClick={() => {
+				date = new Date(date);
+				let month = (date.getMonth() + 1).toString();
+				if (month.startsWith('0') && month.length === 2) {
+					month = month.substring(1);
+				}
+				let dayOfMonth = date.getDate().toString();
+				if (dayOfMonth.startsWith('0') && dayOfMonth.length === 2) {
+					dayOfMonth = dayOfMonth.substring(1);
+				}
+				const year = date.getFullYear().toString();
+				router.push(`/events/${month}-${dayOfMonth}-${year}?eventType=theater`);
+			}}>{date.getDate()}</span>
+		</div >
 	);
 
 	const CustomToolbar = () => (
@@ -165,7 +177,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 				const realEvents = [];
 				for (const e of events) {
 					const tmpE = e;
-					tmpE.title = `${e.title} hosted by ${e.organizer}`;
+					tmpE.title = `${e.title} @ ${e.location}`;
 					const [startMonth, startDay, startYear] = tmpE.start.split("/");
 					const [endMonth, endDay, endYear] = tmpE.end.split("/");
 					tmpE.start = new Date(parseInt('20' + startYear), parseInt(startMonth), parseInt(startDay));
@@ -221,13 +233,13 @@ export default function TheaterCalendar() {
 
 	useEffect(() => { setReady(true); }, []);
 	return (
-		<>
+		<div className="theater-calendar-container">
 			<Dropdown current={'Theater'} />
 			<div className="min-h-screen">
 				{ready && <><DesktopCalendar customClasses={"hidden md:block"} />
 					<MobileCalendar customClasses={"md:hidden"} /></>}
 			</div>
-		</>
+		</div>
 	)
 }
 

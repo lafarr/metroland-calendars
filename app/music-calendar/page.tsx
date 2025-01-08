@@ -12,9 +12,10 @@ export default function CustomCalendar() {
 	const [isClient, setIsClient] = useState<boolean>(false);
 	useEffect(() => {
 		setIsClient(true);
+		
 	}, [])
 	return (
-		<>
+		<div className="music-calendar-container">
 			<Dropdown current={'Music'} />
 			{isClient && <>
 				<div className="hidden md:block">
@@ -25,6 +26,6 @@ export default function CustomCalendar() {
 				</div>
 			</>}
 			{!isClient && <Loading />}
-		</>
+		</div>
 	)
 };

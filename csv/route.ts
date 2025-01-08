@@ -6,7 +6,6 @@ import { connectDb } from "@/app/lib/utils";
 
 function getXlsData(base64String: string): any[] {
 	try {
-		console.log(base64String);
 		const base64Data = base64String.replace(/^data:.*?;base64,/, '');
 
 		const buffer = Buffer.from(base64Data, 'base64');
@@ -28,7 +27,7 @@ function getXlsData(base64String: string): any[] {
 
 		// Extract rows (excluding headers)
 		const rows = data.slice(1);
-		console.log('Rows of excel file: ' + rows);
+		console.log(`getXlsData() => ${rows[-1]}`);
 
 		return rows as any[];
 	} catch (error: any) {
@@ -37,15 +36,19 @@ function getXlsData(base64String: string): any[] {
 }
 
 async function handleMusicEvents(base64String: string): Promise<mongoose.Document[]> {
+	console.log('starting handleMusicEvents()');
 	let events;
 	try {
 		events = getXlsData(base64String);
 	} catch (err: any) {
+		console.log(`Error from handleMusicEvents() ${err}`);
 		throw err;
 	}
 	const insertedEvents: mongoose.Document[] = [];
 
-	for (const event of events) {
+	const musicEvents = events.filter((event) => event[0] === 'Music');
+	console.log(`musicEvents.length = ${musicEvents.length}`);
+	for (const event of musicEvents) {
 		const newEvent = new Event({ artist: event[0], venue: event[1], date: event[2], time: event[3], town: event[4], link: event[5] });
 		await newEvent.save();
 		insertedEvents.push(newEvent);
@@ -63,9 +66,11 @@ async function handleMusicEvents(base64String: string): Promise<mongoose.Documen
 // }
 
 export async function POST(req: NextRequest) {
+	console.log('starting POST');
 	try {
 		await connectDb();
 	} catch (err: any) {
+		console.log("Could not connect to db");
 		return NextResponse.json({ err: "Could not connect to db" }, { status: 500 });
 	}
 
@@ -73,6 +78,7 @@ export async function POST(req: NextRequest) {
 	try {
 		fileBase64 = (await req.json()).file;
 	} catch (err: any) {
+		console.log('could not convert request body to json');
 		return NextResponse.json({ err: "Could not convert request body to json" }, { status: 500 });
 	}
 
@@ -80,8 +86,10 @@ export async function POST(req: NextRequest) {
 	try {
 		events = await handleMusicEvents(fileBase64);
 	} catch (err: any) {
+		console.log('could not parse excel file');
 		return NextResponse.json({ err: "Could not parse excel file" }, { status: 400 });
 	}
 
+	console.log(`last excel record: ${getXlsData(fileBase64)[-1]}`);
 	return NextResponse.json({ events: events });
 }

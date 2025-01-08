@@ -1,4 +1,4 @@
-.month-container {
+.music-calendar-container .month-container {
     flex: 1;
     display: flex;
     align-items: center;
@@ -7,7 +7,7 @@
     height: 100%;
 }
 
-.arrow-button {
+.music-calendar-container .arrow-button {
     background: none;
     border: none;
     cursor: pointer;
@@ -21,17 +21,17 @@
     background-color: #333;
 }
 
-.arrow-button svg {
+.music-calendar-container .arrow-button svg {
     width: 28px;
     height: 28px;
 }
 
-.arrow-button svg {
+.music-calendar-container .arrow-button svg {
     width: 24px;
     height: 24px;
 }
 
-.calendar-container {
+.music-calendar-container .calendar-container {
     height: 100vh;
     background-color: #2a2727;
     padding: 20px;
@@ -41,7 +41,7 @@
     box-sizing: border-box;
 }
 
-.left-column {
+.music-calendar-container .left-column {
     display: flex;
     flex-direction: column;
     text-align: center;
@@ -56,7 +56,7 @@
     margin: auto;
 }
 
-.top-left-month {
+.music-calendar-container .top-left-month {
     color: #faff00;
     font-size: 36px;
     font-weight: bold;
@@ -68,7 +68,7 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.main-calendar {
+.music-calendar-container .main-calendar {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -77,14 +77,14 @@
     background-color: #2a2727;
 }
 
-.custom-toolbar {
+.music-calendar-container .custom-toolbar {
     display: flex;
     justify-content: right;
     align-items: center;
     padding: 10px 0;
 }
 
-.view-button {
+.music-calendar-container .view-button {
     color: #888;
     background: none;
     border: none;
@@ -92,32 +92,32 @@
     margin: 0 5px;
 }
 
-.view-button.active {
+.music-calendar-container .view-button.active {
     color: #faff00;
     font-weight: bolder;
 }
 
-.custom-day-bg {
+.music-calendar-container .custom-day-bg {
     background-color: #2a2727;
     color: #faff00;
     border: 1px solid #faff00;
 }
 
-.custom-date-header {
+.music-calendar-container .custom-date-header {
     text-align: left;
     padding: 5px;
     color: #faff00;
     font-size: 14px;
 }
 
-.custom-month-header {
+.music-calendar-container .custom-month-header {
     color: #faff00;
     text-transform: uppercase;
     font-weight: bold;
     padding: 5px;
 }
 
-.custom-event {
+.music-calendar-container .custom-event {
     font-size: 12px;
     color: #fff;
     white-space: nowrap;
@@ -125,32 +125,32 @@
     text-overflow: ellipsis;
 }
 
-.rbc-event {
+.music-calendar-container .rbc-event {
     border: none !important;
     background-color: transparent;
     margin: 0 auto !important;
     width: 90%;
 }
 
-.rbc-event-content {
+.music-calendar-container .rbc-event-content {
     color: black;
     text-align: center;
 }
 
-.rbc-button-link {
+.music-calendar-container .rbc-button-link {
     margin: auto;
 }
 
-.rbc-button-link:hover {
+.music-calendar-container .rbc-button-link:hover {
     opacity: .5;
 }
 
-.rbc-day-bg {
+.music-calendar-container .rbc-day-bg {
     display: flex !important;
     flex-direction: column !important;
 }
 
-.rbc-events-container {
+.music-calendar-container .rbc-events-container {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
@@ -158,63 +158,63 @@
     overflow: hidden !important;
 }
 
-.rbc-row-content {
+.music-calendar-container .rbc-row-content {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
 }
 
-.rbc-time-content {
+.music-calendar-container .rbc-time-content {
     display: none;
 }
 
-.rbc-time-header {
+.music-calendar-container .rbc-time-header {
     height: auto;
     width: 100%;
     overflow-y: auto;
 }
 
-.rbc-calendar > * {
+.music-calendar-container .rbc-calendar > * {
     box-sizing: border-box;
 }
 
-.rbc-time-header-content {
+.music-calendar-container .rbc-time-header-content {
     width: auto;
     min-height: 50vh;
 }
 
-.rbc-time-view {
+.music-calendar-container .rbc-time-view {
     height: auto;
     border: none;
 }
 
-.custom-event:hover {
+.music-calendar-container .custom-event:hover {
     opacity: .5;
 }
 
-.rbc-label {
+.music-calendar-container .rbc-label {
     display: none;
 }
 
-.weekly {
+.music-calendar-container .weekly {
     margin: 0;
 }
 
-.weekly-artist {
+.music-calendar-container .weekly-artist {
     color: #faff00;
 }
 
-.rbc-row-content-scroll-container {
+.music-calendar-container .rbc-row-content-scroll-container {
     flex: 1 !important;
     display: flex !important;
     flex-direction: column !important;
 }
 
-.rbc-row-segment {
+.music-calendar-container .rbc-row-segment {
     flex: 0 0 auto !important;
 }
 
-.input-container {
+.music-calendar-container .input-container {
     position: relative;
     display: flex;
     align-items: center;
@@ -222,7 +222,7 @@
     margin-right: 10vw;
 }
 
-.search-input {
+.music-calendar-container .search-input {
     border: 1px solid lightgray;
     border-radius: 20px;
     font-size: 16px;
@@ -232,7 +232,7 @@
 	outline: none;
 }
 
-.search-icon {
+.music-calendar-container .search-icon {
     position: absolute;
     left: 10px;
     color: lightgray;
@@ -240,91 +240,91 @@
     /* Prevent the icon from blocking input interaction */
 }
 
-.rbc-header {
+.music-calendar-container .rbc-header {
     border: 1px solid #faff00;
 }
 
-.rbc-show-more {
+.music-calendar-container .rbc-show-more {
     font-size: 12px !important;
     background-color: transparent !important;
     color: lightgray !important;
 }
 
-.rbc-selected {
+.music-calendar-container .rbc-selected {
     background-color: transparent !important;
 }
 
-.weekly {
+.music-calendar-container .weekly {
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.rbc-show-more-hover {
+.music-calendar-container .rbc-show-more-hover {
     color: lightgray;
 }
 
-.rbc-month-view,
-.rbc-time-view {
+.music-calendar-container .rbc-month-view,
+.music-calendar-container .rbc-time-view {
     background-color: #2a2727;
 }
 
-.rbc-row-segment {
+.music-calendar-container .rbc-row-segment {
     width: 90%;
 }
 
 @media (max-width: 768px) {
-    .rbc-button-link {
+    .music-calendar-container .rbc-button-link {
         display: none;
     }
 
-    .calendar-container {
+    .music-calendar-container .calendar-container {
         flex-direction: column;
         padding: 10px;
     }
 
-    .left-column {
+    .music-calendar-container .left-column {
         width: 100%;
         margin-right: 0;
         margin-bottom: 10px;
     }
 
-    .top-left-month {
+    .music-calendar-container .top-left-month {
         writing-mode: horizontal-tb;
         transform: none;
         height: auto;
         text-align: center;
     }
 
-    .custom-toolbar {
+    .music-calendar-container .custom-toolbar {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .custom-toolbar>div {
+    .music-calendar-container .custom-toolbar>div {
         margin-bottom: 10px;
     }
 
-    .rbc-calendar {
+    .music-calendar-container .rbc-calendar {
         font-size: 12px;
     }
 
-    .rbc-btn-group {
+    .music-calendar-container .rbc-btn-group {
         display: none;
     }
 
-    .input-container {
+    .music-calendar-container .input-container {
         display: none;
     }
 
-    .calendar-type {
+    .music-calendar-container .calendar-type {
         margin: auto;
     }
 
-    .month-name {
+    .music-calendar-container .month-name {
         text-align: center;
     }
 
-    .left-column {
+    .music-calendar-container .left-column {
         height: 30%;
     }
 }

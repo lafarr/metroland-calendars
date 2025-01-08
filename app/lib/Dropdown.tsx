@@ -8,7 +8,7 @@ export default function Dropdown({ current }: { current: string }) {
 	const router = useRouter();
 
 	// Set the first item as the default selected option
-	const [selected, setSelected] = useState(options[0]);
+	const [selected, setSelected] = useState(current);
 
 	return (
 		<div className="p-4 bg-[#2a2727]">
@@ -18,8 +18,10 @@ export default function Dropdown({ current }: { current: string }) {
 			<select
 				id="my-dropdown"
 				value={selected}
-				onChange={(e) => setSelected(e.target.value)}
-				onClick={() => router.push(`/${selected.toLowerCase()}-calendar`)}
+				onChange={(e) => {
+					setSelected(e.target.value);
+					router.push(`/${e.target.value.toLowerCase()}-calendar`);
+				}}
 				className="border border-gray-300 rounded-md px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
 			>
 				{options.map((option) => (

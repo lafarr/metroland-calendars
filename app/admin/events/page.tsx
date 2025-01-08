@@ -158,7 +158,9 @@ const AdminEvents = () => {
 	useEffect(() => {
 		axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 			.then((res) => {
-				setEvents(res.data.events);
+				console.log('empty use effect');
+				console.log(res);
+				setEvents(res.data.events || []);
 			})
 			.catch(err => console.log(err));
 	}, [])
@@ -193,7 +195,7 @@ const AdminEvents = () => {
 				setEditingId(null);
 				axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 					.then(res => {
-						setEvents(res.data.events);
+						setEvents(res.data.events || []);
 					});
 			})
 			.catch(err => console.log(err));
@@ -208,7 +210,7 @@ const AdminEvents = () => {
 			.then(_ => {
 				axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 					.then(res => {
-						setEvents(res.data.events);
+						setEvents(res.data.events || []);
 					});
 			})
 			.catch(err => console.log(err));
@@ -251,9 +253,9 @@ const AdminEvents = () => {
 				link: newEvent.link
 			})
 				.then(_ => {
-					axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/events`)
+					axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 						.then(res => {
-							setEvents(res.data.events);
+							setEvents(res.data.events || []);
 						});
 				})
 				.catch(err => console.log(err));
@@ -269,10 +271,12 @@ const AdminEvents = () => {
 		axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/csv`, {
 			file: csv
 		})
-			.then(_ => {
+			.then((res: any) => {
+				console.log('response from uploading csv: ');
+				console.log(res);
 				axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 					.then(res => {
-						setEvents(res.data.events);
+						setEvents(res.data.events || []);
 					});
 			})
 			.catch(err => console.log(err));
@@ -375,7 +379,7 @@ const AdminEvents = () => {
 				</div>
 			)}
 			<div className="event-grid">
-			{filteredEvents.map((event: any) => (
+				{filteredEvents.map((event: any) => (
 					<EventCard
 						key={event._id}
 						event={event}

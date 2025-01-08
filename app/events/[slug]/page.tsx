@@ -2,12 +2,13 @@
 
 import styles from './EventList.module.css';
 import React, { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter, useParams, useSearchParams } from 'next/navigation'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 
 const EventList = () => {
 	const params = useParams();
+	const searchParams = useSearchParams();
 	const slug = params.slug;
 	const router = useRouter();
 	const [events, setEvents] = useState<any>(null);
@@ -57,18 +58,22 @@ const EventList = () => {
 	useEffect(() => {
 		if (typeof slug === 'string') {
 			const [month, day, year] = slug?.replaceAll('-', '/').split('/');
-			const date = `${month}/${day}/${year.substring(2)}`;
+			let date = `${month}/${day}/${year}`;
+			let otherDate = `${month}/${day}/${year.substring(2)}`;
+			console.log('params: ');
+			console.log(params);
+			const query = searchParams.get('eventType');
+			if (query === 'music') {
 			axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 				.then((res: any) => {
-					console.log(res.data.events);
-					console.log('date: ' + date);
-					setEvents(res.data.events.filter((event: any) => event.date === date));
+					setEvents(res.data.events.filter((event: any) => event.date === date || event.date === otherDate));
 
 					const longDay = new Date(slug).toLocaleString('default', { weekday: 'long' });
 					const longMonth = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toLocaleString('default', { month: 'long' });
 					console.log('longMonth: ' + (parseInt(month) - 1));
 					setNiceDate(`${longDay}, ${longMonth} ${day}, ${year}`);
 				})
+			}
 		}
 	}, [slug])
 
