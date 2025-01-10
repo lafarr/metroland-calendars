@@ -20,7 +20,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 
 
 	useEffect(() => {
-		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/art-events`)
+		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
 			.then((response) => {
 				if (!response.ok) { }
 				return response.json()
@@ -28,14 +28,15 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 						const tmp = [];
 						for (const e of events) {
 							const tmpE = e;
-							tmpE.title = `${e.title} hosted by ${e.organizer}`
+							tmpE.title = `${e.title} @ ${e.venue}`
 							const [startMonth, startDay, startYear] = tmpE.start.split("/");
 							const [endMonth, endDay, endYear] = tmpE.end.split("/");
-							tmpE.start = new Date(parseInt('20' + startYear), parseInt(startMonth), parseInt(startDay));
-							tmpE.end = new Date(parseInt('20' + endYear), parseInt(endMonth), parseInt(endDay));
+							tmpE.start = new Date(parseInt(startYear), parseInt(startMonth), parseInt(startDay));
+							tmpE.end = new Date(parseInt(endYear), parseInt(endMonth), parseInt(endDay));
 							tmp.push(tmpE);
 						}
 						const fEvents = tmp.filter((event: any) => event.start <= selectedDate && event.end >= selectedDate);
+						console.log(fEvents);
 						setFilteredEvents(fEvents);
 						setDisplayedEvents(showAllEvents ? fEvents : fEvents.slice(0, 4));
 					})
@@ -103,7 +104,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 				{displayedEvents?.map((event: any) => (
 					<div key={event._id} className="mb-2 p-2">
 						<p className="font-semibold text-[#faff00]">{event.title.toLowerCase()}</p>
-						<p className="text-sm text-gray-200">organized by {event.organizer.toLowerCase()}</p>
+						<p className="text-sm text-gray-200">@ {event.venue.toLowerCase()}</p>
 					</div>
 				))}
 				{filteredEvents && filteredEvents.length > 4 && !showAllEvents && (
@@ -148,7 +149,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 					dayOfMonth = dayOfMonth.substring(1);
 				}
 				const year = date.getFullYear().toString();
-				router.push(`/events/${month}-${dayOfMonth}-${year}?eventType=art`);
+				router.push(`/events/${month}-${dayOfMonth}-${year}?eventType=other`);
 			}}>{date.getDate()}</span>
 		</div >
 	);
@@ -168,18 +169,18 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 
 	useEffect(() => {
 		setReady(true);
-		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/art-events`)
+		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
 			.then(async (response: Response) => {
 				if (!response.ok) { }
 				const { events } = await response.json();
 				const realEvents = [];
 				for (const e of events) {
 					const tmpE = e;
-					tmpE.title = `${e.title} hosted by ${e.organizer}`;
+					tmpE.title = `${e.title} @ ${e.venue}`;
 					const [startMonth, startDay, startYear] = tmpE.start.split("/");
 					const [endMonth, endDay, endYear] = tmpE.end.split("/");
-					tmpE.start = new Date(parseInt('20' + startYear), parseInt(startMonth) - 1, parseInt(startDay));
-					tmpE.end = new Date(parseInt('20' + endYear), parseInt(endMonth) - 1, parseInt(endDay));
+					tmpE.start = new Date(parseInt(startYear), parseInt(startMonth) - 1, parseInt(startDay));
+					tmpE.end = new Date(parseInt(endYear), parseInt(endMonth) - 1, parseInt(endDay));
 					realEvents.push(tmpE);
 				}
 				setRealEvents(realEvents.filter((e: any) => e.title.toLowerCase().includes(searchQuery)));
@@ -226,13 +227,12 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 	)
 }
 
-export default function ArtCalendar() {
+export default function OtherCalendar() {
 	const [ready, setReady] = useState(false);
 
 	useEffect(() => { setReady(true); }, []);
 	return (
 		<>
-			<Dropdown current={'Art'} />
 			<div className="min-h-screen">
 				{ready && <><DesktopCalendar customClasses={"hidden md:block"} />
 					<MobileCalendar customClasses={"md:hidden"} /></>}

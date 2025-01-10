@@ -8,6 +8,7 @@ export function useMobileMusicData(selectedDate: Date, setFilteredEvents: any, s
 			.then((res: any) => {
 				return res.json()
 					.then(({ events }: any) => {
+						// TODO: Fix the times mobile music data
 						const realEvents = events?.map((boop: any) => ({ ...boop, start: new Date(boop.start), end: new Date(boop.end), date: new Date(boop.date) }));
 						const relevantEvents = realEvents?.filter((event: any) => event.date.getMonth() === selectedDate.getMonth() && event.date.getDate() === selectedDate.getDate() && event.date.getFullYear() === selectedDate.getFullYear()); setMusicData(relevantEvents);
 						return relevantEvents;

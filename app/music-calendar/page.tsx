@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './ReactBigCalendar.css';
-import Loading from "../loading";
 import MobileCalendar from './mobile-calendar';
 import DesktopCalendar from './desktop-calendar';
-import Dropdown from '../lib/Dropdown';
 
 export default function CustomCalendar() {
 	const [isClient, setIsClient] = useState<boolean>(false);
@@ -16,7 +14,6 @@ export default function CustomCalendar() {
 	}, [])
 	return (
 		<div className="music-calendar-container">
-			<Dropdown current={'Music'} />
 			{isClient && <>
 				<div className="hidden md:block">
 					<DesktopCalendar />
@@ -25,7 +22,6 @@ export default function CustomCalendar() {
 					<MobileCalendar />
 				</div>
 			</>}
-			{!isClient && <Loading />}
 		</div>
 	)
 };

@@ -143,6 +143,7 @@ const AdminEvents = () => {
 	const [filters, setFilters] = useState<any>({ artist: '', date: '', venue: '', town: '' });
 	const [filteredEvents, setFilteredEvents] = useState<any[]>(events);
 	const [csv, setCsv] = useState<any>(null);
+	const [selectedCsvType, setSelectedCsvType] = useState<string>('music');
 
 	function csvToBase64(file: any) {
 		if (file) {
@@ -158,8 +159,6 @@ const AdminEvents = () => {
 	useEffect(() => {
 		axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 			.then((res) => {
-				console.log('empty use effect');
-				console.log(res);
 				setEvents(res.data.events || []);
 			})
 			.catch(err => console.log(err));
@@ -269,14 +268,14 @@ const AdminEvents = () => {
 
 	function handleCsvSubmit() {
 		axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/csv`, {
-			file: csv
+			file: csv,
+			type: selectedCsvType
 		})
 			.then((res: any) => {
-				console.log('response from uploading csv: ');
-				console.log(res);
 				axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 					.then(res => {
 						setEvents(res.data.events || []);
+						setShowAddForm(false);
 					});
 			})
 			.catch(err => console.log(err));
@@ -368,6 +367,10 @@ const AdminEvents = () => {
 					</div>
 					<div className='w-full'>
 						<p className="text-center text-gray-400 mt-[2.5vh] mb-[2.5vh]">OR</p>
+						<div className="flex justify-center">
+							<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}m-auto rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
+							<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}m-auto rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
+						</div>
 						<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} />
 						<div className='flex justify-center'>
 							<button onClick={handleCsvSubmit}
@@ -396,4 +399,3 @@ const AdminEvents = () => {
 };
 
 export default AdminEvents;
-

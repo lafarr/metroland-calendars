@@ -20,7 +20,10 @@ export default function DesktopCalendar() {
 	const handleFilter = useCallback((e: any) => {
 		const val = e.target.value;
 		setFilterValue(val);
-		setFilteredEvents(_ => events.filter((event: any) => event.title.toLowerCase().includes(val.toLowerCase())));
+		setFilteredEvents(_ => events.filter((event: any) => event.artist.toLowerCase().includes(val.toLowerCase())
+			|| event.venue.toLowerCase().includes(val.toLowerCase())
+			|| event.town.toLowerCase().includes(val.toLowerCase())
+		))
 	}, [events, setFilteredEvents]);
 
 
@@ -68,7 +71,6 @@ export default function DesktopCalendar() {
 							)
 						}));
 						setFilteredEvents(events);
-						console.log(events);
 					})
 			})
 	}, []);

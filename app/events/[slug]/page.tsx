@@ -14,9 +14,17 @@ const EventList = () => {
 	const [events, setEvents] = useState<any>(null);
 	const [niceDate, setNiceDate] = useState<any>(null);
 
+	function getCaptureGroups(pattern: RegExp, str: string): any[] {
+		const matches = str.match(pattern);
+
+		if (matches) {
+			return matches.slice(1);
+		}
+		return [];
+	}
+
 	const generateSortedEvents = (events: any) => {
 		events = events.sort((a: any, b: any) => {
-			console.log(a.time);
 			let [aTime, aMorningOrNight] = a.time.split(' ');
 			let [aHours, aMinutes] = aTime.split(':');
 			aHours = parseInt(aHours);
@@ -43,10 +51,12 @@ const EventList = () => {
 
 		return (
 			events?.map((event: any) => {
+				const pattern = /(\d\d?):(\d\d?).*\s*([PpaA][mM])/;
+				const [hours, mins, timeOfDay] = getCaptureGroups(pattern, event.time);
 				return (
-					<div className={styles.eventCard} key={event.id}>
+					<div className={styles.eventCard} key={event._id}>
 						<div className={styles.eventTitle}>{event.artist}</div>
-						<div className={styles.eventTime}>{event.time}</div>
+						<div className={styles.eventTime}>{`${hours}:${mins} ${timeOfDay.toUpperCase()}`}</div>
 						<div className={styles.eventTime}>{event.venue}</div>
 						<button onClick={() => window.open(event.link, '_blank')} className={`${styles.linkButton}`}>View Tickets/Venue</button>
 					</div>
@@ -60,19 +70,19 @@ const EventList = () => {
 			const [month, day, year] = slug?.replaceAll('-', '/').split('/');
 			let date = `${month}/${day}/${year}`;
 			let otherDate = `${month}/${day}/${year.substring(2)}`;
-			console.log('params: ');
-			console.log(params);
 			const query = searchParams.get('eventType');
 			if (query === 'music') {
-			axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
-				.then((res: any) => {
-					setEvents(res.data.events.filter((event: any) => event.date === date || event.date === otherDate));
+				axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
+					.then((res: any) => {
+						setEvents(res.data.events.filter((event: any) => event.date === date || event.date === otherDate));
 
-					const longDay = new Date(slug).toLocaleString('default', { weekday: 'long' });
-					const longMonth = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toLocaleString('default', { month: 'long' });
-					console.log('longMonth: ' + (parseInt(month) - 1));
-					setNiceDate(`${longDay}, ${longMonth} ${day}, ${year}`);
-				})
+						const longDay = new Date(slug).toLocaleString('default', { weekday: 'long' });
+						const longMonth = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toLocaleString('default', { month: 'long' });
+						console.log('longMonth: ' + (parseInt(month) - 1));
+						setNiceDate(`${longDay}, ${longMonth} ${day}, ${year}`);
+					})
+			} else if (query === 'other') {
+				// TODO: Fill this in for eventType=other
 			}
 		}
 	}, [slug])

@@ -1,7 +1,6 @@
 import { connectDb } from "@/app/lib/utils";
 import { Event } from "@/app/lib/models/event-model";
 import { NextRequest, NextResponse } from "next/server";
-import { ArtEvent } from "@/app/lib/models/art-event-model";
 
 function getCaptureGroups(pattern: RegExp, str: string): string[] {
 	const matches = pattern.exec(str);
@@ -13,37 +12,26 @@ export async function GET() {
 	try {
 		await connectDb();
 		const events = await Event.find();
-		const artEvents = await ArtEvent.find();
-		const pattern = /(\d\d?)\/(\d\d?)\/(\d\d\d?\d?)/
+		const pattern = /(\d\d?)[/-](\d\d?)[-/](\d\d\d?\d?)/
 
 		const cleanedEvents: any[] = events.map((event, idx: number) => {
 			const date = event.date;
-			let [month, day, year] = getCaptureGroups(pattern, date);
-			if (year.length === 2) {
+			let year = getCaptureGroups(pattern, date).at(-1);
+			if (year?.length === 2) {
 				year = "20" + year;
 			}
-			return { _id: event._id, artist: event.artist, venue: event.venue, date: event.date, link: event.link, time: event.time, start: event.date, end: event.date };
+			return { 
+				_id: event._id,
+				 artist: event.artist,
+				 venue: event.venue,
+				 date: event.date,
+				 link: event.link,
+				 time: event.time,
+				 town: event.town,
+				 start: event.date,
+				 end: event.date 
+				};
 		});
-
-		const cleanedArtEvents = artEvents.map((event, idx: number) => {
-			const start = event.start;
-			const end = event.end;
-
-			let [m, d, y] = getCaptureGroups(pattern, start);
-			let [mm, dd, yy] = getCaptureGroups(pattern, end);
-
-			if (y.length === 2) {
-				y = "20" + y;
-			}
-
-			if (yy.length === 2) {
-				yy = "20" + yy;
-			}
-
-			return { _id: event._id, title: event.title, organizer: event.organizer, date: event.date, link: event.link, time: event.time, start: event.start, end: event.end };
-		});
-
-		for (const e of cleanedArtEvents) cleanedEvents.push(e);
 
 		return NextResponse.json({ events: cleanedEvents });
 	} catch (err) {
