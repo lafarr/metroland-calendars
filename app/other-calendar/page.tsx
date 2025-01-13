@@ -9,6 +9,13 @@ import './styles.css';
 import { useRouter } from 'next/navigation';
 import Dropdown from '../lib/Dropdown';
 
+enum Categories {
+	visualArts,
+	theater,
+	film,
+	poetry
+}
+
 const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	const [selectedDate, setSelectedDate] = useState<any>(new Date());
 	const [weekDates, setWeekDates] = useState<any>([]);
@@ -133,6 +140,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 	const router = useRouter();
 	const localizer = momentLocalizer(moment);
 	const inputRef = useRef<HTMLInputElement>(null);
+	const [categoryFilter, setCategoryFilter] = useState<Categories | null>(null);
 
 	const CustomEvent = ({ event }: any) => (
 		<div style={{ width: '100%', color: 'black' }} className="custom-event">
@@ -160,6 +168,47 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 
 	const CustomToolbar = () => (
 		<div className="custom-toolbar" key={"search"}>
+			<Dropdown current='Other' />
+			<div className="flex">
+				<button
+					onClick={() => {
+						if (categoryFilter !== Categories.visualArts) setCategoryFilter(Categories.visualArts);
+						else
+							setCategoryFilter(null);
+					}}
+					className={`${categoryFilter === Categories.visualArts ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					visual arts
+				</button>
+				<button
+					onClick={() => {
+						if (categoryFilter !== Categories.theater)
+							setCategoryFilter(Categories.theater);
+						else
+							setCategoryFilter(null);
+					}}
+					className={`${categoryFilter === Categories.theater ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					theater
+				</button>
+				<button
+					onClick={() => {
+						if (categoryFilter !== Categories.film)
+							setCategoryFilter(Categories.film);
+						else
+							setCategoryFilter(null);
+					}}
+					className={`${categoryFilter === Categories.film ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					film
+				</button>
+				<button
+					onClick={() => {
+						if (categoryFilter !== Categories.poetry)
+							setCategoryFilter(Categories.poetry);
+						else setCategoryFilter(null);
+					}}
+					className={`${categoryFilter === Categories.poetry ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					poetry
+				</button>
+			</div>
 			<div className="input-container">
 				<Search className="absolute text-gray-200 right-[90%]" />
 				<input type="text" ref={inputRef} className="search-input focus:outline-none" onChange={(e: any) => setSearchQuery(e.target.value)} value={searchQuery} />
@@ -187,9 +236,31 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 					tmpE.end = new Date(parseInt(endYear), parseInt(endMonth) - 1, parseInt(endDay));
 					realEvents.push(tmpE);
 				}
-				setRealEvents(realEvents.filter((e: any) => e.title.toLowerCase().includes(searchQuery)));
+				let categoryFilterString = '';
+				switch (categoryFilter) {
+					case Categories.visualArts:
+						categoryFilterString = 'Visual Arts';
+						break;
+					case Categories.theater:
+						categoryFilterString = 'Theater';
+						break;
+					case Categories.poetry:
+						categoryFilterString = 'Poetry';
+						break;
+					case Categories.film:
+						categoryFilterString = 'Film';
+						break;
+					default:
+						categoryFilterString = '';
+				}
+				setRealEvents(realEvents.filter((e: any) => {
+					if (categoryFilterString)
+						return e.category === categoryFilterString && e.title.toLowerCase().includes(searchQuery)
+					else
+						return e.title.toLowerCase().includes(searchQuery);
+				}));
 			})
-	}, [searchQuery])
+	}, [searchQuery, categoryFilter])
 
 	const handlePrevMonth = () => {
 		setCurrentDate(prevDate => moment(prevDate).subtract(1, 'month').toDate());
