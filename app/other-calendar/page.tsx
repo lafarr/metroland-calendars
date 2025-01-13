@@ -29,6 +29,10 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 						for (const e of events) {
 							const tmpE = e;
 							tmpE.title = `${e.title} @ ${e.venue}`
+							if (!tmpE.start) {
+								console.log('start error');
+								console.log(tmpE);
+							}
 							const [startMonth, startDay, startYear] = tmpE.start.split("/");
 							const [endMonth, endDay, endYear] = tmpE.end.split("/");
 							tmpE.start = new Date(parseInt(startYear), parseInt(startMonth), parseInt(startDay));

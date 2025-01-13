@@ -2,12 +2,13 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const otherEventSchema = new Schema({
-  artist: String,
-  venue: String,
-  date: String,
-  time: String,
-  town: String,
-  link: String,
+	title: String,
+	venue: String,
+	start: String,
+	end: String,
+	category: String,
+	link: String,
+	time: String
 });
 
-export const OtherEvent = mongoose.models.OtherEvent || mongoose.model("OtherEvent", otherEventSchema);
+export default mongoose.models.OtherEvent || mongoose.model("OtherEvent", otherEventSchema);

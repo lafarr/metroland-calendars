@@ -1,4 +1,4 @@
-import { OtherEvent } from "@/app/lib/models/other-event-model";
+import OtherEvent from "@/app/lib/models/other-event-model";
 import { connectDb } from "@/app/lib/utils";
 import { NextResponse } from "next/server";
 
@@ -15,20 +15,25 @@ export async function GET() {
 		const pattern = /(\d\d?)[/-](\d\d?)[-/](\d\d\d?\d?)/
 
 		const cleanedEvents: any[] = events.map((event, idx: number) => {
-			const date = event.date;
-			let year = getCaptureGroups(pattern, date).at(-1);
-			if (year?.length === 2) {
-				year = "20" + year;
-			}
+			const startCaptures = getCaptureGroups(pattern, event.start);
+			const endCaptures = getCaptureGroups(pattern, event.end);
+			let startYear = startCaptures[startCaptures.length - 1]
+			let endYear = endCaptures[endCaptures.length - 1];
+
+			if (startYear?.length === 2) startYear = '20' + startYear;
+			if (endYear?.length === 2) endYear = '20' + endYear;
+
 			// start, end, title, venue, link
-			return { 
+			return {
 				_id: event._id,
-				 title: event.title,
-				 venue: event.venue,
-				 link: event.link,
-				 start: event.date,
-				 end: event.date 
-				};
+				title: event.title,
+				venue: event.venue,
+				start: `${startCaptures[0]}/${startCaptures[1]}/${startYear}`,
+				end: `${endCaptures[0]}/${endCaptures[1]}/${endYear}`,
+				category: event.category,
+				link: event.link,
+				time: event.time
+			};
 		});
 
 		return NextResponse.json({ events: cleanedEvents });

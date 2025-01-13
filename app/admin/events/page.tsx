@@ -267,6 +267,7 @@ const AdminEvents = () => {
 	};
 
 	function handleCsvSubmit() {
+		console.log(`USING selectedCsvType=${selectedCsvType}`);
 		axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/csv`, {
 			file: csv,
 			type: selectedCsvType

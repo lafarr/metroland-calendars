@@ -3,7 +3,14 @@ import mongoose from "mongoose";
 import * as xlsx from "xlsx";
 import { Event } from "@/app/lib/models/event-model";
 import { connectDb } from "@/app/lib/utils";
-import { OtherEvent } from "@/app/lib/models/other-event-model";
+import OtherEvent from "@/app/lib/models/other-event-model";
+
+
+function getCaptureGroups(pattern: RegExp, str: string): string[] {
+	const matches = pattern.exec(str);
+	if (!matches) return [];
+	return matches.slice(1);
+}
 
 function getXlsData(base64String: string): any[] {
 	try {
@@ -35,6 +42,18 @@ function getXlsData(base64String: string): any[] {
 	}
 }
 
+function fixDate(str: string): string {
+	const datePattern = /(\d\d?)\s*[/-]\s*(\d\d?)\s*[/-]\s*(\d\d\d?\d?)\s*/;
+	const [month, day, year] = getCaptureGroups(datePattern, str);
+	if (!year) {
+		console.log('messed up date');
+		console.log(str);
+	}
+	return `${month}/${day}/${year.length === 2 ? '20' + year : year}`;
+}
+
+// 0         1       2    3     4        5       6
+// StartDate EndDate Time Title Location Website Category
 async function handleMusicEvents(base64String: string): Promise<mongoose.Document[]> {
 	let events;
 	try {
@@ -44,14 +63,15 @@ async function handleMusicEvents(base64String: string): Promise<mongoose.Documen
 	}
 	const insertedEvents: mongoose.Document[] = [];
 
-	for (const event of events) {
+	for (const event of events.filter((event) => event[6].toLowerCase() === 'music')) {
+		const startDate = event[0].toLowerCase() !== 'Ongoing' ? event[0] : '1/1/2024';
 		const newEvent = new Event({
-			artist: event[0],
-			venue: event[1],
-			date: event[2],
-			time: event[3],
-			town: event[4],
-			link: event[5] 
+			artist: event[3],
+			venue: event[4],
+			date: fixDate(startDate),
+			time: event[2],
+			town: '',
+			link: event[5]
 		});
 		await newEvent.save();
 		insertedEvents.push(newEvent);
@@ -60,6 +80,8 @@ async function handleMusicEvents(base64String: string): Promise<mongoose.Documen
 	return insertedEvents;
 }
 
+// 0         1       2    3     4        5       6
+// StartDate EndDate Time Title Location Website Category
 async function handleOtherEvents(base64String: string): Promise<mongoose.Document[]> {
 	let events;
 	try {
@@ -70,13 +92,18 @@ async function handleOtherEvents(base64String: string): Promise<mongoose.Documen
 	const insertedEvents: mongoose.Document[] = [];
 
 	// start, end, title, venue
-	for (const event of events) {
+	for (const event of events.filter((event) => event[6].toLowerCase() !== 'music')) {
+		console.log(event[6].toLowerCase());
+		const startDate = event[0].toLowerCase() !== 'ongoing' ? event[0] : '1/1/2024';
+		const endDate = event[1].trim() !== '' ? event[1] : startDate;
 		const newEvent = new OtherEvent({
-			start: event[0],
-			end: event[1],
-			title: event[2],
-			venue: event[3],
-			link: event[4] 
+			title: event[3],
+			venue: event[4],
+			start: fixDate(startDate),
+			end: fixDate(endDate),
+			link: event[5],
+			category: event[6],
+			time: event[2]
 		});
 		await newEvent.save();
 		insertedEvents.push(newEvent);
@@ -89,24 +116,27 @@ export async function POST(req: NextRequest) {
 	try {
 		await connectDb();
 	} catch (err: any) {
+		console.log(err);
 		return NextResponse.json({ err: "Could not connect to db" }, { status: 500 });
 	}
 
 	let fileBase64, type;
 	try {
-		fileBase64 = (await req.json()).file;
-		type = (await req.json()).type;
+		const body = await req.json();
+		fileBase64 = body.file;
+		type = body.type;
 	} catch (err: any) {
+		console.log(err);
 		return NextResponse.json({ err: "Could not convert request body to json" }, { status: 500 });
 	}
 
 	let events = null;
 	try {
-		if (type === 'music')
-			events = await handleMusicEvents(fileBase64);
-		else if (type === 'other')
-			events = await handleOtherEvents(fileBase64)
+		events = await handleMusicEvents(fileBase64);
+		events = await handleOtherEvents(fileBase64)
 	} catch (err: any) {
+		console.log('400 error');
+		console.log(err);
 		return NextResponse.json({ err: "Could not parse excel file" }, { status: 400 });
 	}
 
