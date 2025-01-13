@@ -176,7 +176,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 						else
 							setCategoryFilter(null);
 					}}
-					className={`${categoryFilter === Categories.visualArts ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					className={`${categoryFilter === Categories.visualArts ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
 					visual arts
 				</button>
 				<button
@@ -186,7 +186,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 						else
 							setCategoryFilter(null);
 					}}
-					className={`${categoryFilter === Categories.theater ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					className={`${categoryFilter === Categories.theater ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
 					theater
 				</button>
 				<button
@@ -196,7 +196,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 						else
 							setCategoryFilter(null);
 					}}
-					className={`${categoryFilter === Categories.film ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					className={`${categoryFilter === Categories.film ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
 					film
 				</button>
 				<button
@@ -205,7 +205,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 							setCategoryFilter(Categories.poetry);
 						else setCategoryFilter(null);
 					}}
-					className={`${categoryFilter === Categories.poetry ? 'bg-[#faff00] text-black' : ''} rounded p-2 m-2 border border-[#faff00]`}>
+					className={`${categoryFilter === Categories.poetry ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
 					poetry
 				</button>
 			</div>
