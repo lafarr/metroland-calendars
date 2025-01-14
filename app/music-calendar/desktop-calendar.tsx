@@ -6,6 +6,7 @@ import { ChevronUp, ChevronDown, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import Dropdown from '../lib/Dropdown';
 
 export default function DesktopCalendar() {
 	const [showingMonthly, setShowingMonthly] = useState<boolean>(true);
@@ -78,6 +79,7 @@ export default function DesktopCalendar() {
 	const CustomToolbar = () => {
 		return (
 			<div className="custom-toolbar">
+				<Dropdown current='Music' />
 				<div className="input-container">
 					<Search className="search-icon" />
 					<input type="text" ref={inputRef} className="search-input" value={filterValue} onChange={handleFilter} key={1} />

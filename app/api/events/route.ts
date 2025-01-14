@@ -12,26 +12,37 @@ export async function GET() {
 	try {
 		await connectDb();
 		const events = await Event.find();
-		const pattern = /(\d\d?)[/-](\d\d?)[-/](\d\d\d?\d?)/
+		const pattern = /(\d\d?)[/-](\d\d?)[-/](\d\d\d?\d?)/;
+		const now = new Date();
+		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-		const cleanedEvents: any[] = events.map((event, idx: number) => {
+		const cleanedEvents: any[] = events.filter((event: any) => {
 			const date = event.date;
 			let year = getCaptureGroups(pattern, date).at(-1);
 			if (year?.length === 2) {
 				year = "20" + year;
 			}
-			return { 
-				_id: event._id,
-				 artist: event.artist,
-				 venue: event.venue,
-				 date: event.date,
-				 link: event.link,
-				 time: event.time,
-				 town: event.town,
-				 start: event.date,
-				 end: event.date 
+			const [month, day, _] = date.split('/');
+			return new Date(parseInt(year ?? ''), parseInt(month) - 1, parseInt(day)) >= today;
+		})
+			.map((event, idx: number) => {
+				const date = event.date;
+				let year = getCaptureGroups(pattern, date).at(-1);
+				if (year?.length === 2) {
+					year = "20" + year;
+				}
+				return {
+					_id: event._id,
+					artist: event.artist,
+					venue: event.venue,
+					date: event.date,
+					link: event.link,
+					time: event.time,
+					town: event.town,
+					start: event.date,
+					end: event.date
 				};
-		});
+			});
 
 		return NextResponse.json({ events: cleanedEvents });
 	} catch (err) {

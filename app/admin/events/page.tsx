@@ -56,65 +56,6 @@ const EventCard = ({ event, onEdit, onDelete, onSave, onCancel, isEditing }: any
 		return `${year}-${month}-${day}`;
 	}
 
-	if (isEditing) {
-		return (
-			<div className="event-card editing">
-				<label htmlFor="artist">Artist Name</label>
-				<input
-					id="artist"
-					type="text"
-					name="artist"
-					value={editedEvent.artist}
-					onChange={handleInputChange}
-					placeholder="Artist Name"
-				/>
-				<label htmlFor="date">Date</label>
-				<input
-					id="date"
-					type="date"
-					name="date"
-					value={fixDate(editedEvent.date)}
-					onChange={handleInputChange}
-				/>
-				<label htmlFor="venue">Venue</label>
-				<input
-					id="venue"
-					type="text"
-					name="venue"
-					value={editedEvent.venue}
-					onChange={handleInputChange}
-					placeholder="Venue"
-				/>
-				<label htmlFor="time">Time</label>
-				<input
-					type="time"
-					id="time"
-					name="time"
-					value={fixTime(editedEvent.time)}
-					onChange={handleInputChange}
-					placeholder="Event Time"
-				/>
-				<label htmlFor="link">Link</label>
-				<input
-					type="text"
-					id="link"
-					name="link"
-					value={editedEvent.link}
-					onChange={handleInputChange}
-					placeholder="Link"
-				/>
-				<div className="button-group">
-					<button onClick={() => onSave(editedEvent)} className="save-button">
-						<Save size={16} /> Save
-					</button>
-					<button onClick={onCancel} className="cancel-button">
-						<X size={16} /> Cancel
-					</button>
-				</div>
-			</div>
-		);
-	}
-
 	return (
 		<div className="event-card">
 			<h3>{event.artist}</h3>
@@ -267,7 +208,6 @@ const AdminEvents = () => {
 	};
 
 	function handleCsvSubmit() {
-		console.log(`USING selectedCsvType=${selectedCsvType}`);
 		axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/csv`, {
 			file: csv,
 			type: selectedCsvType
@@ -289,94 +229,25 @@ const AdminEvents = () => {
 				<button onClick={() => setShowAddForm(true)} className="add-event-button">
 					<Plus size={16} /> Add New Event
 				</button>
-				<div className="filter-controls">
-					<Filter size={16} />
-					<input
-						type="text"
-						name="artist"
-						value={filters.artist}
-						onChange={handleFilterChange}
-						placeholder="Filter by artist"
-					/>
-					<input
-						type="date"
-						name="date"
-						value={filters.date}
-						onChange={handleFilterChange}
-					/>
-					<input
-						type="text"
-						name="venue"
-						value={filters.venue}
-						onChange={handleFilterChange}
-						placeholder="Filter by venue"
-					/>
-				</div>
 			</div>
 			{showAddForm && (
 				<div className="add-event-form">
-					<input
-						type="text"
-						name="artist"
-						value={newEvent.artist}
-						onChange={handleAddInputChange}
-						placeholder="Artist Name"
-					/>
-					<input
-						type="date"
-						name="date"
-						value={newEvent.date ? newEvent.date : new Date().toISOString().split('T')[0]}
-						onChange={handleAddInputChange}
-					/>
-					<input
-						type="text"
-						name="venue"
-						value={newEvent.venue}
-						onChange={handleAddInputChange}
-						placeholder="Venue"
-					/>
-					<input
-						type="text"
-						name="town"
-						value={newEvent.town}
-						onChange={handleAddInputChange}
-						placeholder="Town"
-					/>
-					<input
-						type="time"
-						name="time"
-						value={newEvent.time == '' ? '00:00' : newEvent.time}
-						onChange={handleAddInputChange}
-					/>
-					<input
-						type="text"
-						name="link"
-						value={newEvent.link}
-						placeholder={'Link'}
-						onChange={handleAddInputChange}
-					/>
-					<div className="button-group">
-						<button onClick={handleAddEvent} className="save-button">
-							<Save size={16} /> Add Event
-						</button>
-						<button onClick={() => {
-							setShowAddForm(false)
-							setNewEvent({ artist: '', date: new Date().toISOString().split('T')[0], venue: '', town: '', time: '00:00', link: '' });
-						}} className="cancel-button">
-							<X size={16} /> Cancel
-						</button>
-					</div>
 					<div className='w-full'>
-						<p className="text-center text-gray-400 mt-[2.5vh] mb-[2.5vh]">OR</p>
-						<div className="flex justify-center">
-							<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}m-auto rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
-							<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}m-auto rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
+						<div className="flex justify-center gap-4">
+							<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
+							<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
 						</div>
 						<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} />
-						<div className='flex justify-center'>
+						<div className='flex justify-center gap-4'>
 							<button onClick={handleCsvSubmit}
-								className="m-auto rounded h-10 w-80 text-white bg-[#4CAF50]">
+								className="rounded h-10 w-80 text-white bg-[#4CAF50]">
 								Add Excel Events
+							</button>
+							<button onClick={() => {
+								setShowAddForm(false)
+								setNewEvent({ artist: '', date: new Date().toISOString().split('T')[0], venue: '', town: '', time: '00:00', link: '' });
+							}} className="bg-red-700 rounded h-10 w-80 text-white">
+							Cancel
 							</button>
 						</div>
 					</div>

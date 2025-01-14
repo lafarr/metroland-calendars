@@ -13,6 +13,7 @@ enum Categories {
 	visualArts,
 	theater,
 	film,
+	comedy,
 	poetry
 }
 
@@ -169,7 +170,6 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 	const CustomToolbar = () => (
 		<div className="custom-toolbar" key={"search"}>
 			<Dropdown current='Other' />
-			<div className="flex">
 				<button
 					onClick={() => {
 						if (categoryFilter !== Categories.visualArts) setCategoryFilter(Categories.visualArts);
@@ -208,7 +208,15 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 					className={`${categoryFilter === Categories.poetry ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
 					poetry
 				</button>
-			</div>
+				<button
+					onClick={() => {
+						if (categoryFilter !== Categories.comedy)
+							setCategoryFilter(Categories.comedy);
+						else setCategoryFilter(null);
+					}}
+					className={`${categoryFilter === Categories.comedy ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
+					comedy
+				</button>
 			<div className="input-container">
 				<Search className="absolute text-gray-200 right-[90%]" />
 				<input type="text" ref={inputRef} className="search-input focus:outline-none" onChange={(e: any) => setSearchQuery(e.target.value)} value={searchQuery} />
@@ -236,24 +244,27 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 					tmpE.end = new Date(parseInt(endYear), parseInt(endMonth) - 1, parseInt(endDay));
 					realEvents.push(tmpE);
 				}
-				let categoryFilterString = '';
-				switch (categoryFilter) {
-					case Categories.visualArts:
-						categoryFilterString = 'Visual Arts';
-						break;
-					case Categories.theater:
-						categoryFilterString = 'Theater';
-						break;
-					case Categories.poetry:
-						categoryFilterString = 'Poetry';
-						break;
-					case Categories.film:
-						categoryFilterString = 'Film';
-						break;
-					default:
-						categoryFilterString = '';
-				}
 				setRealEvents(realEvents.filter((e: any) => {
+					let categoryFilterString = '';
+					switch (categoryFilter) {
+						case Categories.visualArts:
+							categoryFilterString = 'Visual Arts';
+							break;
+						case Categories.theater:
+							categoryFilterString = 'Theater';
+							break;
+						case Categories.poetry:
+							categoryFilterString = 'Poetry';
+							break;
+						case Categories.film:
+							categoryFilterString = 'Film';
+							break;
+						case Categories.comedy:
+							categoryFilterString = 'Comedy';
+							break;
+						default:
+							categoryFilterString = '';
+					}
 					if (categoryFilterString)
 						return e.category === categoryFilterString && e.title.toLowerCase().includes(searchQuery)
 					else
@@ -272,6 +283,8 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 
 	return (
 		<div className={`${customClasses} art`}>
+			<div className="flex">
+			</div>
 			<div className="calendar-container">
 				<div className="left-column">
 					<button
