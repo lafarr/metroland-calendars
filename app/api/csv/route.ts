@@ -78,6 +78,9 @@ async function handleMusicEvents(base64String: string): Promise<mongoose.Documen
 	});
 
 	const insertedEvents: mongoose.Document[] = [];
+
+	await Event.deleteMany({});
+
 	for (const event of events) {
 		const newEvent = new Event({
 			artist: event[0],
@@ -90,7 +93,6 @@ async function handleMusicEvents(base64String: string): Promise<mongoose.Documen
 		await newEvent.save();
 		insertedEvents.push(newEvent);
 	}
-
 	return insertedEvents;
 }
 
@@ -118,6 +120,8 @@ async function handleOtherEvents(base64String: string): Promise<mongoose.Documen
 
 	const insertedEvents: mongoose.Document[] = [];
 
+	await OtherEvent.deleteMany({});
+
 	// start, end, title, venue
 	for (const event of events.filter((event: any) => event[6].toLowerCase() !== 'music')) {
 		console.log(event[6].toLowerCase());
@@ -135,7 +139,6 @@ async function handleOtherEvents(base64String: string): Promise<mongoose.Documen
 		await newEvent.save();
 		insertedEvents.push(newEvent);
 	}
-
 	return insertedEvents;
 }
 
