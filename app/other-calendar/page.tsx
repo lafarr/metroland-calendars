@@ -145,7 +145,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 
 	const CustomEvent = ({ event }: any) => (
 		<div style={{ width: '100%', color: 'black' }} className="custom-event">
-			{<a href="https://google.com" target="_blank" className="weekly w-full overflow-hidden text-ellipsis">{event.title}</a>}
+			{<a href={event.link} target="_blank" className="weekly w-full overflow-hidden text-ellipsis">{event.title}</a>}
 		</div>
 	);
 
