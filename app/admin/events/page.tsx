@@ -1,37 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Edit, Plus, Save, X, Filter, Trash2 } from 'lucide-react';
+import { Edit, Plus, Trash2 } from 'lucide-react';
 import './EventManagement.css';
 import axios from 'axios';
 import ModernFilePicker from './ModernFilePicker';
 
 const EventCard = ({ event, onEdit, onDelete, onSave, onCancel, isEditing }: any) => {
-	const [editedEvent, setEditedEvent] = useState<any>(event);
-
-	const handleInputChange = (e: any) => {
-		let { name, value } = e.target;
-		if (name === 'date') {
-			let [year, month, day] = value.split('-');
-			year = year.substring(2);
-			if (month.length === 2 && month.charAt(0) === '0') {
-				month = month.charAt(1);
-			}
-			if (day.length === 2 && day.charAt(0) === '0') {
-				day = day.charAt(1);
-			}
-			value = `${month}/${day}/${year}`;
-		}
-		setEditedEvent({ ...editedEvent, [name]: value });
-	};
-
 	function fixTime(timeToFix: any) {
 		const withSpaceRegex = /(?<hours>\d\d?):(?<minutes>\d\d) (?<timeOfDay>([pP][mM])|([aA][mM]))/g;
 		const withoutSpaceRegex = /(?<hours>\d\d?):(?<minutes>\d\d)(?<timeOfDay>([pP][mM])|([aA][mM]))/g;
 		const hasSpace = withSpaceRegex.exec(timeToFix);
 		const noSpace = withoutSpaceRegex.exec(timeToFix);
 		if (hasSpace || noSpace) {
-			const res = hasSpace ? hasSpace : noSpace;
+			const res = hasSpace || noSpace;
 			let { hours, minutes, timeOfDay }: any = res?.groups;
 			if (hours === '12' && timeOfDay.toLowerCase() === 'am') {
 				hours = '00';
@@ -156,11 +138,6 @@ const AdminEvents = () => {
 			.catch(err => console.log(err));
 	};
 
-	const handleAddInputChange = (e: any) => {
-		const { name, value } = e.target;
-		setNewEvent({ ...newEvent, [name]: value });
-	};
-
 	function cleanDate(date: any) {
 		const [year, month, day] = date.split('-');
 		return `${month}/${day}/${year}`;
@@ -179,28 +156,6 @@ const AdminEvents = () => {
 
 		return `${hours}:${minutes} ${isPm ? 'PM' : 'AM'}`;
 	}
-
-	const handleAddEvent = () => {
-		if (newEvent.artist && newEvent.date) {
-			setNewEvent({ artist: '', date: new Date().toISOString().split('T')[0], venue: '', town: '', time: '00:00', link: '' });
-			setShowAddForm(false);
-			axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/events`, {
-				artist: newEvent.artist,
-				date: cleanDate(newEvent.date),
-				venue: newEvent.venue,
-				town: newEvent.town,
-				time: cleanTime(newEvent.time),
-				link: newEvent.link
-			})
-				.then(_ => {
-					axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
-						.then(res => {
-							setEvents(res.data.events || []);
-						});
-				})
-				.catch(err => console.log(err));
-		}
-	};
 
 	const handleFilterChange = (e: any) => {
 		const { name, value } = e.target;

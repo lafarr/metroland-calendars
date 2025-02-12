@@ -2,15 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useMobileMusicData } from "../hooks/useArtData";
 
 export default function MobileCalendar() {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [weekDates, setWeekDates] = useState<any>([]);
 	const [showAllEvents, setShowAllEvents] = useState<any>(false);
-	const [filteredEvents, setFilteredEvents] = useState<any>(null);
-	const [displayedEvents, setDisplayedEvents] = useState<any>(null);
-	const [musicData, refetchMusicData] = useMobileMusicData(selectedDate, setFilteredEvents, setDisplayedEvents, showAllEvents);
+	const [filteredEvents] = useState<any>(null);
+	const [displayedEvents] = useState<any>(null);
 
 	useEffect(() => {
 		const dates = getWeekDates(selectedDate);

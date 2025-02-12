@@ -28,9 +28,6 @@ export async function GET() {
 			.map((event, idx: number) => {
 				const date = event.date;
 				let year = getCaptureGroups(pattern, date).at(-1);
-				if (year?.length === 2) {
-					year = "20" + year;
-				}
 				return {
 					_id: event._id,
 					artist: event.artist,

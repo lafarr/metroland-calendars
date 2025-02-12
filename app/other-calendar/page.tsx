@@ -21,16 +21,14 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	const [selectedDate, setSelectedDate] = useState<any>(new Date());
 	const [weekDates, setWeekDates] = useState<any>([]);
 	const [showAllEvents, setShowAllEvents] = useState<any>(false);
-	const [events, setEvents] = useState<any>(null);
 	const [filteredEvents, setFilteredEvents] = useState<any>(null);
 	const [displayedEvents, setDisplayedEvents] = useState<any>(null);
-	const localizer = momentLocalizer(moment);
 
 
 	useEffect(() => {
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
 			.then((response) => {
-				if (!response.ok) { }
+				if (!response.ok) { /* TODO: do this */}
 				return response.json()
 					.then(({ events }: any) => {
 						const tmp = [];
@@ -83,10 +81,6 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 		setSelectedDate(newDate);
 	};
 
-	const formatDate = (date: any) => {
-		return date.toISOString().split('T')[0];
-	};
-
 	return (
 		<div className={`${customClasses} min-h-screen max-w-2xl mx-auto p-4 bg-[#2a2727]`}>
 			<h3 className="text-center text-[#faff00] block font-semibold mb-2">{selectedDate.toLocaleString('default', { month: 'long' })}</h3>
@@ -133,7 +127,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 };
 
 
-function DesktopCalendar({ customClasses }: { customClasses: string }) {
+function DesktopCalendar({ customClasses }: Readonly<{ customClasses: string }>) {
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [realEvents, setRealEvents] = useState<any[]>([]);
 	const [ready, setReady] = useState<boolean>(false);
@@ -232,7 +226,7 @@ function DesktopCalendar({ customClasses }: { customClasses: string }) {
 		setReady(true);
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
 			.then(async (response: Response) => {
-				if (!response.ok) { }
+				if (!response.ok) { /* TODO: do this */ }
 				const { events } = await response.json();
 				const realEvents = [];
 				for (const e of events) {

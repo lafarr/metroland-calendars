@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-export default function Dropdown({ current }: { current: string }) {
+export default function Dropdown({ current }: Readonly<{ current: string }>) {
 	const options = ['Music', 'Other'];
 	const router = useRouter();
 
@@ -19,7 +19,7 @@ export default function Dropdown({ current }: { current: string }) {
 					setSelected(e.target.value);
 					router.push(`/${e.target.value.toLowerCase()}-calendar`);
 				}}
-				className="outline-none text-gray-300 border-gray-700 p-4 bg-[#2a2727] border border-gray-300 rounded-md px-3 py-2 text-gray-300 focus:outline-none focus:ring-blue-500"
+				className="outline-none p-4 bg-[#2a2727] border border-gray-300 rounded-md px-3 py-2 text-gray-300 focus:outline-none focus:ring-blue-500"
 			>
 				{options.map((option) => (
 					<option key={option} value={option}>
