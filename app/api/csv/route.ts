@@ -15,12 +15,10 @@ function getCaptureGroups(pattern: RegExp, str: string): string[] {
 function getXlsData(base64String: string): any {
 	try {
 		const base64Data = base64String.replace(/^data:.*?;base64,/, '');
-
 		const buffer = Buffer.from(base64Data, 'base64');
-
 		const workbook = xlsx.read(buffer, { type: 'buffer', cellText: true, cellDates: false });
 
-		// TODO: Look into this, we may need to iterate oaver all sheet names if we 
+		// TODO: Look into this, we may need to iterate over all sheet names if we 
 		// get lots of events in the future
 		const sheetName = workbook.SheetNames[0];
 		const worksheet = workbook.Sheets[sheetName];
@@ -126,7 +124,10 @@ async function handleOtherEvents(base64String: string): Promise<mongoose.Documen
 	for (const event of events.filter((event: any) => event[6].toLowerCase() !== 'music')) {
 		console.log(event[6].toLowerCase());
 		const startDate = event[0].toLowerCase() !== 'ongoing' ? event[0] : '1/1/2024';
-		const endDate = event[1].trim() !== '' ? event[1] : startDate;
+		let endDate = event[1].trim() !== '' && event[1].toLowerCase() !== 'ongoing' ? event[1] : startDate;
+		if (endDate.toLowerCase() === 'n/a') {
+			endDate = '1/1/2074';
+		}
 		const newEvent = new OtherEvent({
 			title: event[3],
 			venue: event[4],

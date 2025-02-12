@@ -35,9 +35,6 @@ export async function GET() {
 				if (startYear?.length === 2) startYear = '20' + startYear;
 				if (endYear?.length === 2) endYear = '20' + endYear;
 
-				const now = new Date();
-				const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
 				// start, end, title, venue, link
 				return {
 					_id: event._id,

@@ -24,13 +24,18 @@ const EventList = () => {
 	}
 
 	const generateSortedEvents = (events: any) => {
-		events = events.sort((a: any, b: any) => {
+		const filteredEvents = events.filter((event: any) => event.time.toLowerCase().match(/\d\d?:\d\d?\s*[ap]m/)).sort((a: any, b: any) => {
 			let [aTime, aMorningOrNight] = a.time.split(' ');
+			aTime.toUpperCase();
+			aMorningOrNight.toUpperCase();
+
 			let [aHours, aMinutes] = aTime.split(':');
 			aHours = parseInt(aHours);
 			aMinutes = parseInt(aMinutes);
 			if (aMorningOrNight === 'PM') {
 				aHours += 12;
+		console.log('here are the sorted events: ');
+		console.log(events);
 			}
 
 			let [bTime, bMorningOrNight] = b.time.split(' ');
@@ -49,14 +54,19 @@ const EventList = () => {
 			return 1;
 		})
 
+		const nonConformingEvents = events.filter((event: any) => !event.time.toLowerCase().match(/\d\d?:\d\d?\s*[ap]m/));
+		for (const event of nonConformingEvents) {
+			filteredEvents.push(event);
+		}
 		return (
-			events?.map((event: any) => {
-				const pattern = /(\d\d?):(\d\d?).*\s*([PpaA][mM])/;
-				const [hours, mins, timeOfDay] = getCaptureGroups(pattern, event.time);
+			filteredEvents?.map((event: any) => {
+				if (event.time.toLowerCase() === 'varies') {
+					event.time = 'Varies';
+				}
 				return (
 					<div className={styles.eventCard} key={event._id}>
 						<div className={styles.eventTitle}>{event.artist || event.title}</div>
-						<div className={styles.eventTime}>{`${hours || ''}${hours && mins ? ':' : ''}${mins || ''} ${timeOfDay?.toUpperCase() || ''}`}</div>
+						<div className={styles.eventTime}>{event.time}</div>
 						<div className={styles.eventTime}>{event.venue}</div>
 						<button onClick={() => window.open(event.link, '_blank')} className={`${styles.linkButton}`}>View Tickets/Venue</button>
 					</div>
