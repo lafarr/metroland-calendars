@@ -26,8 +26,6 @@ export async function GET() {
 			return new Date(parseInt(year ?? ''), parseInt(month) - 1, parseInt(day)) >= today;
 		})
 			.map((event, idx: number) => {
-				const date = event.date;
-				let year = getCaptureGroups(pattern, date).at(-1);
 				return {
 					_id: event._id,
 					artist: event.artist,
