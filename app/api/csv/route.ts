@@ -22,28 +22,24 @@ function validateMusicEventData(rows: any[]): string | undefined {
 		}
 
 		for (let i = 0; i < row.length; i++) {
-			if (i === 0 && !datePattern.test(row[i].toLowerCase().trim())) {
-				return `Invalid date: ${row[i]}`;
-			}
-
-			if (i === 1 && !timePattern.test(row[i].toLowerCase().trim())) {
-				return `Invalid time: ${row[i]}`;
-			}
-
-			if (i === 2 && row[i] === "") {
+			if (i === 0 && row[i] === "") {
 				return `Empty artist: ${row[i]}`;
 			}
 
-			if (i === 3 && row[i] === "") {
+			if (i === 1 && row[i] === "") {
 				return `Empty venue: ${row[i]}`;
+			}
+
+			if (i === 2 && !datePattern.test(row[i].toLowerCase().trim())) {
+				return `Invalid date: ${row[i]}`;
+			}
+
+			if (i === 3 && !timePattern.test(row[i].toLowerCase().trim())) {
+				return `Invalid time: ${row[i]}`;
 			}
 
 			if (i === 4 && row[i] === "") {
 				return `Empty town: ${row[i]}`;
-			}
-
-			if (i === 5 && row[i] === "") {
-				return `Empty ticket or venue link: ${row[i]}`;
 			}
 		}
 	}
@@ -168,7 +164,9 @@ async function handleMusicEvents(
 		throw err;
 	}
 
+	// FIXME: boop
 	const hasCorrectNumCols: boolean = columnNames.length === 6;
+	// FIXME: This is a hack to get the column names to match the expected column names
 	const correctColNames = [
 		"event name (band/artist)",
 		"venue",

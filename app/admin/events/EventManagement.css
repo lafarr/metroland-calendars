@@ -143,7 +143,7 @@ h1 {
 .add-event-form {
   background-color: #201f1f;
   border-radius: 0.5rem;
-  padding: 1.5rem;
+  padding: 20vh 20vh;
   margin-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
