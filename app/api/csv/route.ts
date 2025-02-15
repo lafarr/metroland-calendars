@@ -11,6 +11,7 @@ function getCaptureGroups(pattern: RegExp, str: string): string[] {
 	return matches.slice(1);
 }
 
+// TODO: Add validation for time
 function validateMusicEventData(rows: any[]): string | undefined {
 	// MM/DD/YYYY, HH:MM, Artist, Venue, Town, Ticket or Venue Link
 	const datePattern = /(\d\d?)\s*[/-]\s*(\d\d?)\s*[/-]\s*(\d\d\d?\d?)\s*/;
@@ -163,28 +164,6 @@ async function handleMusicEvents(
 	} catch (err: any) {
 		throw err;
 	}
-
-	// FIXME: boop
-	const hasCorrectNumCols: boolean = columnNames.length === 6;
-	// FIXME: This is a hack to get the column names to match the expected column names
-	const correctColNames = [
-		"event name (band/artist)",
-		"venue",
-		"date",
-		"time",
-		"town",
-		"ticket or venue link",
-	];
-	if (!hasCorrectNumCols) {
-		// TODO: Throw an error here because there are an incorrect number of columns in the spreadsheet for this type
-	}
-
-	columnNames.forEach((colName: string) => {
-		if (!correctColNames.includes(colName.toLowerCase())) {
-			// TODO: Throw an error here because the column names aren't correct for music spreadsheet
-		}
-	});
-
 	const insertedEvents: mongoose.Document[] = [];
 
 	await Event.deleteMany({});
@@ -207,7 +186,7 @@ async function handleMusicEvents(
 async function handleOtherEvents(
 	base64String: string
 ): Promise<mongoose.Document[]> {
-	let events, columnNames, res;
+	let events, res;
 	try {
 		res = getXlsData(base64String);
 		const error: string | undefined = validateOtherEventData(res.data);
