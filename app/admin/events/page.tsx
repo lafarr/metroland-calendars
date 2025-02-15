@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import './EventManagement.css';
 import axios from 'axios';
 import ModernFilePicker from './ModernFilePicker';
+import AdminEventsGrid from './admin-events-grid';
 
 const AdminEvents = () => {
 	const [events, setEvents] = useState<any>([]);
@@ -17,6 +18,7 @@ const AdminEvents = () => {
 	const [uploadError, setUploadError] = useState<string | null>(null);
 	const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [selectedGridType, setSelectedGridType] = useState<string>('music');
 
 	function csvToBase64(file: any) {
 		if (file) {
@@ -78,36 +80,49 @@ const AdminEvents = () => {
 			<h1>Event Management</h1>
 			<div className="controls">
 			</div>
-				<div className="add-event-form">
-					{uploadError && (
-						<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-							<span className="block sm:inline">{uploadError}</span>
-						</div>
-					)}
-					{uploadSuccess && (
-						<div className="bg-green-100 border text-center border-green-400 text-black px-4 py-3 rounded relative mb-4 animate-[slideIn_1.3s_ease-in-out]">
-							<span className="block sm:inline">Upload successful</span>
-						</div>
-					)}
-					{isLoading && (
-						<div className="flex justify-center items-center">
-							<Loader2 className="animate-spin" size={24} />
-						</div>
-					)}
-					<div className='w-full'>
-						<div className="flex justify-center gap-4">
-							<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
-							<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
-						</div>
-						<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} />
-						<div className='flex justify-center gap-4'>
-							<button onClick={handleCsvSubmit}
-								className="rounded h-10 w-80 text-white bg-[#4CAF50]">
-								Add Excel Events
-							</button>
-						</div>
+			<div className="add-event-form">
+				{uploadError && (
+					<div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+						<span className="block sm:inline">{uploadError}</span>
+					</div>
+				)}
+				{uploadSuccess && (
+					<div className="bg-green-100 border text-center border-green-400 text-black px-4 py-3 rounded relative mb-4 animate-[slideIn_1.3s_ease-in-out]">
+						<span className="block sm:inline">Upload successful</span>
+					</div>
+				)}
+				{isLoading && (
+					<div className="flex justify-center items-center">
+						<Loader2 className="animate-spin" size={24} />
+					</div>
+				)}
+				<div className='w-full'>
+					<div className="flex justify-center gap-4">
+						<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
+						<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
+					</div>
+					<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} />
+					<div className='flex justify-center gap-4'>
+						<button onClick={handleCsvSubmit}
+							className="rounded h-10 w-80 text-white bg-[#4CAF50]">
+							Add Excel Events
+						</button>
 					</div>
 				</div>
+			</div>
+			<div className='flex justify-center gap-4'>
+				<button onClick={() => setSelectedGridType('music')}
+					className={`${selectedGridType !== 'music' ? 'hover:opacity-75 ' : ''}
+				rounded h-10 w-80 text-black bg-[#faff00]${selectedGridType === 'music' ? ' opacity-30' : ' opacity-100'}`}>
+					Music events
+				</button>
+				<button onClick={() => setSelectedGridType('other')}
+					className={`${selectedGridType !== 'other' ? 'hover:opacity-75 ' : ''}
+				rounded h-10 w-80 text-black bg-[#faff00]${selectedGridType === 'other' ? ' opacity-30' : ' opacity-100'}`}>
+					Other events
+				</button>
+			</div>
+			<AdminEventsGrid eventType={selectedGridType} />
 		</div>
 	);
 };

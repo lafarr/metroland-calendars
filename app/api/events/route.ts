@@ -1,5 +1,5 @@
 import { connectDb } from "@/app/lib/utils";
-import { Event } from "@/app/lib/models/event-model";
+import { EventModel } from "@/app/lib/models/event-model";
 import { NextRequest, NextResponse } from "next/server";
 
 function getCaptureGroups(pattern: RegExp, str: string): string[] {
@@ -11,7 +11,7 @@ function getCaptureGroups(pattern: RegExp, str: string): string[] {
 export async function GET() {
 	try {
 		await connectDb();
-		const events = await Event.find();
+		const events = await EventModel.find();
 		const pattern = /(\d\d?)[/-](\d\d?)[-/](\d\d\d?\d?)/;
 		const now = new Date();
 		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
 	try {
 		newEventData = await req.json();
-		newEvent = new Event();
+		newEvent = new EventModel();
 	} catch (err) {
 		return NextResponse.json({ error: 'Could not convert request body to JSON' }, { status: 500 });
 	}
@@ -87,7 +87,7 @@ export async function DELETE(req: NextRequest) {
 	const id = searchParams.get('id');
 
 	try {
-		await Event.deleteOne({ _id: id });
+		await EventModel.deleteOne({ _id: id });
 	} catch (err) {
 		return NextResponse.json({ error: 'Could not delete document from collection' }, { status: 500 });
 	}
@@ -110,7 +110,7 @@ export async function PUT(req: NextRequest) {
 	}
 
 	try {
-		const doc = await Event.findOne({ _id: body._id });
+		const doc = await EventModel.findOne({ _id: body._id });
 		if (!doc) return NextResponse.json({ error: 'Could not find the given document' }, { status: 404 });
 		for (const prop in body) {
 			doc[prop] = body[prop];

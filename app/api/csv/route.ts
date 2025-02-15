@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import * as xlsx from "xlsx";
-import { Event } from "@/app/lib/models/event-model";
+import { EventModel } from "@/app/lib/models/event-model";
 import { connectDb } from "@/app/lib/utils";
 import OtherEvent from "@/app/lib/models/other-event-model";
 
@@ -166,10 +166,10 @@ async function handleMusicEvents(
 	}
 	const insertedEvents: mongoose.Document[] = [];
 
-	await Event.deleteMany({});
+	await EventModel.deleteMany({});
 
 	for (const event of events) {
-		const newEvent = new Event({
+		const newEvent = new EventModel({
 			artist: event[0],
 			venue: event[1],
 			date: fixDate(event[2]),
