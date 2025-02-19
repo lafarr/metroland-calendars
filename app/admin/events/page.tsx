@@ -77,7 +77,7 @@ const AdminEvents = () => {
 
 	return (
 		<div className="event-management-container">
-			<h1>Event Management</h1>
+			<h1 className="text-gray-300">Event Management</h1>
 			<div className="controls">
 			</div>
 			<div className="add-event-form">
@@ -94,7 +94,7 @@ const AdminEvents = () => {
 				<div className='w-full'>
 					{fileUploadIsLoading && (
 						<div className="flex justify-center items-center">
-							<Loader2 className="animate-spin" size={24} />
+							<Loader2 className="text-white animate-spin" size={24} />
 						</div>
 					)}
 					{!fileUploadIsLoading && <>
