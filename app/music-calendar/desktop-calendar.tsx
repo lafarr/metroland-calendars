@@ -44,7 +44,7 @@ export default function DesktopCalendar() {
 		setCurrentDate(prevDate => moment(prevDate).add(1, 'week').toDate());
 	};
 
-	const handleNavigate = (newDate: any) => {
+	const handleNavigate = (newDate: Date) => {
 		setCurrentDate(newDate);
 	};
 	const router = useRouter();
@@ -61,17 +61,22 @@ export default function DesktopCalendar() {
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 			.then((res: any) => {
 				return res.json()
-					.then(({ events }: any) => {
-						setEvents(events.map((event: any) => {
+					.then(({ events: reqEvents }: any) => {
+						const tmpEvents = reqEvents.map((event: any) => {
 							let [month, day, year] = event.date.split('/');
+							const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 							return (
 								{
 									...event,
-									date: new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
+									date: date,
+									start: date,
+									end: date
 								}
 							)
-						}));
-						setFilteredEvents(events);
+						});
+						setEvents(tmpEvents);
+						setFilteredEvents(tmpEvents);
+						console.log(typeof reqEvents[0].start);
 					})
 			})
 	}, []);
@@ -95,8 +100,8 @@ export default function DesktopCalendar() {
 					<button style={{ fontSize: '20px', color: '#faff00' }} onClick={() => {
 						setShowingWeekly(true);
 						setShowingMonthly(false);
-						setCurrentDate(new Date());
 						setView('week')
+						setCurrentDate(new Date());
 					}}
 						className={`view-button ${view === 'week' ? 'active' : ''}`}>weekly</button>
 				</div>
@@ -145,7 +150,6 @@ export default function DesktopCalendar() {
 			}
 			const year = date.getFullYear().toString();
 			router.push(`/events/${month}-${dayOfMonth}-${year}`);
-			// router.push(`/events/${month}-${dayOfMonth}-${year}`);
 		}}>
 			{label}
 		</span>
