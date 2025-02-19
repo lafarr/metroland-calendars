@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
@@ -10,14 +10,13 @@ import AdminEventsGrid from './admin-events-grid';
 const AdminEvents = () => {
 	const [events, setEvents] = useState<any>([]);
 
-	const [, setNewEvent] = useState<any>({ artist: '', date: new Date().toISOString().split('T')[0], venue: '', town: '', time: '00:00', link: '' });
 	const [filters] = useState<any>({ artist: '', date: '', venue: '', town: '' });
 	const [, setFilteredEvents] = useState<any[]>(events);
 	const [csv, setCsv] = useState<any>(null);
 	const [selectedCsvType, setSelectedCsvType] = useState<string>('music');
 	const [uploadError, setUploadError] = useState<string | null>(null);
 	const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [fileUploadIsLoading, setFileUploadIsLoading] = useState<boolean>(false);
 	const [selectedGridType, setSelectedGridType] = useState<string>('music');
 
 	function csvToBase64(file: any) {
@@ -54,6 +53,7 @@ const AdminEvents = () => {
 	}, [events, filters]);
 
 	function handleCsvSubmit() {
+		setFileUploadIsLoading(true);
 		axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/csv`, {
 			file: csv,
 			type: selectedCsvType
@@ -65,13 +65,13 @@ const AdminEvents = () => {
 						setUploadError(null);
 						setUploadSuccess(true);
 						setTimeout(() => setUploadSuccess(false), 5000);
-						setIsLoading(false);
+						setFileUploadIsLoading(false);
 					});
 			})
 			.catch(err => {
 				setUploadError(err.response?.data?.message || 'An error occurred while uploading the file');
 				setUploadSuccess(false);
-				setIsLoading(false);
+				setFileUploadIsLoading(false);
 			});
 	}
 
@@ -91,23 +91,25 @@ const AdminEvents = () => {
 						<span className="block sm:inline">Upload successful</span>
 					</div>
 				)}
-				{isLoading && (
-					<div className="flex justify-center items-center">
-						<Loader2 className="animate-spin" size={24} />
-					</div>
-				)}
 				<div className='w-full'>
-					<div className="flex justify-center gap-4">
-						<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
-						<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
-					</div>
-					<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} />
-					<div className='flex justify-center gap-4'>
-						<button onClick={handleCsvSubmit}
-							className="rounded h-10 w-80 text-white bg-[#4CAF50]">
-							Add Excel Events
-						</button>
-					</div>
+					{fileUploadIsLoading && (
+						<div className="flex justify-center items-center">
+							<Loader2 className="animate-spin" size={24} />
+						</div>
+					)}
+					{!fileUploadIsLoading && <>
+						<div className="flex justify-center gap-4">
+							<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
+							<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
+						</div>
+						<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} />
+						<div className='flex justify-center gap-4'>
+							<button onClick={handleCsvSubmit}
+								className="rounded h-10 w-80 text-white bg-[#4CAF50]">
+								Add Excel Events
+							</button>
+						</div>
+					</>}
 				</div>
 			</div>
 			<div className='flex justify-center gap-4'>

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 const AdminEventCard = ({ event, eventType }: any) => {
     eventType = eventType.toLowerCase().trim();
@@ -13,20 +13,12 @@ const AdminEventCard = ({ event, eventType }: any) => {
             </div>
         );
     } else if (eventType === 'other') {
-        // 
-        // title: String,
-        // venue: String,
-        // start: String,
-        // end: String,
-        // category: String,
-        // link: String,
-        // time: String
         return (
             <div className="event-card bg-[#201f1f]">
                 <h3>{event.title}</h3>
                 <p className="event-date">{event.start} - {event.end}</p>
                 <p className="event-date">{event.time}</p>
-                <p><a className="event-link" href={event.link}>{event.link}</a></p>
+                <p><a className="event-link" target="_blank" rel="noopener noreferrer" href={event.link}>{event.link}</a></p>
                 <p className="event-link">{event.category}</p>
             </div>
         );

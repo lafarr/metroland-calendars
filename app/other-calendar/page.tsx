@@ -28,28 +28,23 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	useEffect(() => {
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
 			.then((response) => {
-				if (!response.ok) { /* TODO: do this */}
-				return response.json()
-					.then(({ events }: any) => {
-						const tmp = [];
-						for (const e of events) {
-							const tmpE = e;
-							tmpE.title = `${e.title} @ ${e.venue}`
-							if (!tmpE.start) {
-								console.log('start error');
-								console.log(tmpE);
+				if (!response.ok)
+					return response.json()
+						.then(({ events }: any) => {
+							const tmp = [];
+							for (const e of events) {
+								const tmpE = e;
+								tmpE.title = `${e.title} @ ${e.venue}`
+								const [startMonth, startDay, startYear] = tmpE.start.split("/");
+								const [endMonth, endDay, endYear] = tmpE.end.split("/");
+								tmpE.start = new Date(parseInt(startYear), parseInt(startMonth), parseInt(startDay));
+								tmpE.end = new Date(parseInt(endYear), parseInt(endMonth), parseInt(endDay));
+								tmp.push(tmpE);
 							}
-							const [startMonth, startDay, startYear] = tmpE.start.split("/");
-							const [endMonth, endDay, endYear] = tmpE.end.split("/");
-							tmpE.start = new Date(parseInt(startYear), parseInt(startMonth), parseInt(startDay));
-							tmpE.end = new Date(parseInt(endYear), parseInt(endMonth), parseInt(endDay));
-							tmp.push(tmpE);
-						}
-						const fEvents = tmp.filter((event: any) => event.start <= selectedDate && event.end >= selectedDate);
-						console.log(fEvents);
-						setFilteredEvents(fEvents);
-						setDisplayedEvents(showAllEvents ? fEvents : fEvents.slice(0, 4));
-					})
+							const fEvents = tmp.filter((event: any) => event.start <= selectedDate && event.end >= selectedDate);
+							setFilteredEvents(fEvents);
+							setDisplayedEvents(showAllEvents ? fEvents : fEvents.slice(0, 4));
+						})
 			})
 	}, [selectedDate, showAllEvents]);
 
@@ -164,53 +159,53 @@ function DesktopCalendar({ customClasses }: Readonly<{ customClasses: string }>)
 	const CustomToolbar = () => (
 		<div className="custom-toolbar" key={"search"}>
 			<Dropdown current='Other' />
-				<button
-					onClick={() => {
-						if (categoryFilter !== Categories.visualArts) setCategoryFilter(Categories.visualArts);
-						else
-							setCategoryFilter(null);
-					}}
-					className={`${categoryFilter === Categories.visualArts ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
-					visual arts
-				</button>
-				<button
-					onClick={() => {
-						if (categoryFilter !== Categories.theater)
-							setCategoryFilter(Categories.theater);
-						else
-							setCategoryFilter(null);
-					}}
-					className={`${categoryFilter === Categories.theater ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
-					theater
-				</button>
-				<button
-					onClick={() => {
-						if (categoryFilter !== Categories.film)
-							setCategoryFilter(Categories.film);
-						else
-							setCategoryFilter(null);
-					}}
-					className={`${categoryFilter === Categories.film ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
-					film
-				</button>
-				<button
-					onClick={() => {
-						if (categoryFilter !== Categories.poetry)
-							setCategoryFilter(Categories.poetry);
-						else setCategoryFilter(null);
-					}}
-					className={`${categoryFilter === Categories.poetry ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
-					poetry
-				</button>
-				<button
-					onClick={() => {
-						if (categoryFilter !== Categories.comedy)
-							setCategoryFilter(Categories.comedy);
-						else setCategoryFilter(null);
-					}}
-					className={`${categoryFilter === Categories.comedy ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
-					comedy
-				</button>
+			<button
+				onClick={() => {
+					if (categoryFilter !== Categories.visualArts) setCategoryFilter(Categories.visualArts);
+					else
+						setCategoryFilter(null);
+				}}
+				className={`${categoryFilter === Categories.visualArts ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
+				visual arts
+			</button>
+			<button
+				onClick={() => {
+					if (categoryFilter !== Categories.theater)
+						setCategoryFilter(Categories.theater);
+					else
+						setCategoryFilter(null);
+				}}
+				className={`${categoryFilter === Categories.theater ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
+				theater
+			</button>
+			<button
+				onClick={() => {
+					if (categoryFilter !== Categories.film)
+						setCategoryFilter(Categories.film);
+					else
+						setCategoryFilter(null);
+				}}
+				className={`${categoryFilter === Categories.film ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
+				film
+			</button>
+			<button
+				onClick={() => {
+					if (categoryFilter !== Categories.poetry)
+						setCategoryFilter(Categories.poetry);
+					else setCategoryFilter(null);
+				}}
+				className={`${categoryFilter === Categories.poetry ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
+				poetry
+			</button>
+			<button
+				onClick={() => {
+					if (categoryFilter !== Categories.comedy)
+						setCategoryFilter(Categories.comedy);
+					else setCategoryFilter(null);
+				}}
+				className={`${categoryFilter === Categories.comedy ? 'bg-[#faff00] text-black' : 'text-gray-300'} rounded p-2 m-2 border border-[#faff00]`}>
+				comedy
+			</button>
 			<div className="input-container">
 				<Search className="absolute text-gray-200 right-[90%]" />
 				<input type="text" ref={inputRef} className="search-input focus:outline-none" onChange={(e: any) => setSearchQuery(e.target.value)} value={searchQuery} />

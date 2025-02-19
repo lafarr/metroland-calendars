@@ -7,7 +7,6 @@ export default function Dropdown({ current }: Readonly<{ current: string }>) {
 	const options = ['Music', 'Other'];
 	const router = useRouter();
 
-	// Set the first item as the default selected option
 	const [selected, setSelected] = useState(current);
 
 	return (

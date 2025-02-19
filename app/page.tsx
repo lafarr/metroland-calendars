@@ -1,5 +1,6 @@
+import { redirect } from 'next/navigation'
+
 export default function Home() {
-  return (
-	  <></>
-  );
+	// /music-calendar should always be the default
+	redirect('/music-calendar');
 }

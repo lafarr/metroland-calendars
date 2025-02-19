@@ -38,11 +38,6 @@ export default function MobileCalendar() {
 		setSelectedDate(newDate);
 	};
 
-	const formatDate = (date: any) => {
-		const [month, day, year] = date.toLocaleDateString().split("/");
-		return `${year}-${month}-${day}`;
-	};
-
 	return (
 		<div className="min-h-screen max-w-2xl mx-auto p-4 bg-[#2a2727]">
 			<h3 className="text-center text-[#faff00] block font-semibold mb-2">{selectedDate.toLocaleString('default', { month: 'long' })}</h3>

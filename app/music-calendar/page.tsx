@@ -10,7 +10,7 @@ export default function CustomCalendar() {
 	const [isClient, setIsClient] = useState<boolean>(false);
 	useEffect(() => {
 		setIsClient(true);
-		
+
 	}, [])
 	return (
 		<div className="music-calendar-container">
