@@ -22,7 +22,7 @@ export default function DesktopCalendar() {
 	const handleFilter = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const val = e.target.value;
 		setFilterValue(val);
-		setFilteredEvents(_ => events.filter((event: types.MusicEvent & { start: Date, end: Date }) => event.artist.toLowerCase().includes(val.toLowerCase())
+		setFilteredEvents(() => events.filter((event: types.MusicEvent & { start: Date, end: Date }) => event.artist.toLowerCase().includes(val.toLowerCase())
 			|| event.venue.toLowerCase().includes(val.toLowerCase())
 		))
 	}, [events, setFilteredEvents]);

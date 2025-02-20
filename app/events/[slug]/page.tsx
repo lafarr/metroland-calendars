@@ -56,7 +56,7 @@ const EventList = () => {
 				}
 				return (
 					<div className={styles.eventCard} key={event._id}>
-						<div className={styles.eventTitle}>{event.artist || event.title}</div>
+						<div className={styles.eventTitle}>{'artist' in event ? event.artist : event.title}</div>
 						<div className={styles.eventTime}>{event.time}</div>
 						<div className={styles.eventTime}>{event.venue || ''}</div>
 						<button onClick={() => window.open(event.link, '_blank')} className={`${styles.linkButton}`}>View Tickets/Venue</button>

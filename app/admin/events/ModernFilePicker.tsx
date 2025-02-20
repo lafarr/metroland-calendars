@@ -1,14 +1,9 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
+import * as types from '@/app/lib/types';
 
-interface ModernFilePickerProps {
-  onChange?: (file: File | null) => void;
-  type: 'image' | 'csv';
-  text: string;
-}
-
-const ModernFilePicker = (props: ModernFilePickerProps) => {
+const ModernFilePicker = (props: types.ModernFilePickerProps) => {
 	const [file, setFile] = useState<File | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
