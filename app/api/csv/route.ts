@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import mongoose from "mongoose";
 import * as xlsx from "xlsx";
 import { EventModel } from "@/app/lib/models/event-model";
 import { connectDb } from "@/app/lib/utils";
 import OtherEvent from "@/app/lib/models/other-event-model";
+import { NextRequest, NextResponse } from "next/server";
 
 function getCaptureGroups(pattern: RegExp, str: string): string[] {
 	const matches = pattern.exec(str);
@@ -11,9 +11,8 @@ function getCaptureGroups(pattern: RegExp, str: string): string[] {
 	return matches.slice(1);
 }
 
-// TODO: Add validation for time
-function validateMusicEventData(rows: any[]): string | undefined {
-	// MM/DD/YYYY, HH:MM, Artist, Venue, Town, Ticket or Venue Link
+function validateMusicEventData(rows: string[][]): string | undefined {
+
 	const datePattern = /(\d\d?)\s*[/-]\s*(\d\d?)\s*[/-]\s*(\d\d\d?\d?)\s*/;
 	const timePattern = /(\d\d?):(\d\d)\s*([ap]m)?/;
 
@@ -23,31 +22,40 @@ function validateMusicEventData(rows: any[]): string | undefined {
 		}
 
 		for (let i = 0; i < row.length; i++) {
-			if (i === 0 && row[i] === "") {
-				return `Empty artist: ${row[i]}`;
-			}
-
-			if (i === 1 && row[i] === "") {
-				return `Empty venue: ${row[i]}`;
-			}
-
-			if (i === 2 && !datePattern.test(row[i].toLowerCase().trim())) {
-				return `Invalid date: ${row[i]}`;
-			}
-
-			if (i === 3 && !timePattern.test(row[i].toLowerCase().trim())) {
-				return `Invalid time: ${row[i]}`;
-			}
-
-			if (i === 4 && row[i] === "") {
-				return `Empty town: ${row[i]}`;
+			const cleanedValue = row[i].toLowerCase().trim();
+			switch (i) {
+				case 0:
+					if (cleanedValue === "") {
+						return `Empty artist: ${row[i]}`;
+					}
+					break;
+				case 1:
+					if (cleanedValue === "") {
+						return `Empty venue: ${row[i]}`;
+					}
+					break;
+				case 2:
+					if (!datePattern.test(cleanedValue)) {
+						return `Invalid date: ${row[i]}`;
+					}
+					break;
+				case 3:
+					if (!timePattern.test(cleanedValue)) {
+						return `Invalid time: ${row[i]}`;
+					}
+					break;
+				case 4:
+					if (cleanedValue === "") {
+						return `Empty town: ${row[i]}`;
+					}
+					break;
 			}
 		}
 	}
 	return undefined;
 }
 
-function validateOtherEventData(rows: any[]): string | undefined {
+function validateOtherEventData(rows: string[][]): string | undefined {
 	// MM/DD/YYYY, MM/DD/YYYY, HH:MM, Title, Location, Website, [theater, film, poetry, visual arts]
 	// start date, end date, time, title, location, website, category
 	const datePattern = /(\d\d?)\s*[/-]\s*(\d\d?)\s*[/-]\s*(\d\d\d?\d?)\s*/;
@@ -64,40 +72,46 @@ function validateOtherEventData(rows: any[]): string | undefined {
 		}
 
 		for (let i = 0; i < row.length; i++) {
+			const cleanedValue = row[i].toLowerCase().trim();
 			if (
 				i === 0 &&
-				row[i].toLowerCase() !== "ongoing" &&
-				!datePattern.test(row[i].toLowerCase().trim())
+				cleanedValue !== "ongoing" &&
+				!datePattern.test(cleanedValue)
 			) {
 				return `Invalid start date: ${row[i]}`;
 			}
 
 			if (
 				i === 1 &&
-				row[i] !== "n/a" &&
-				row[i] !== "varies" &&
-				!datePattern.test(row[i].toLowerCase().trim())
+				cleanedValue !== "n/a" &&
+				cleanedValue !== "varies" &&
+				!datePattern.test(cleanedValue)
 			) {
 				return `Invalid end date: ${row[i]}`;
 			}
 
-			if (i === 2 && !timePattern.test(row[i].toLowerCase().trim()) && row[i].trim().toLowerCase() !== "varies" && row[i].trim().toLowerCase() !== "") {
+			if (
+				i === 2 &&
+				!timePattern.test(cleanedValue) &&
+				cleanedValue !== "varies" &&
+				cleanedValue !== ""
+			) {
 				return `Invalid time: ${row[i]}`;
 			}
 
-			if (i === 3 && row[i] === "") {
+			if (i === 3 && cleanedValue === "") {
 				return `Empty title: ${row[i]}`;
 			}
 
-			if (i === 4 && row[i] === "") {
+			if (i === 4 && cleanedValue === "") {
 				return `Empty location: ${row[i]}`;
 			}
 
-			if (i === 5 && row[i] === "") {
+			if (i === 5 && cleanedValue === "") {
 				return `Empty website: ${row[i]}`;
 			}
 
-			if (i === 6 && !validCategories.includes(row[i].toLowerCase())) {
+			if (i === 6 && !validCategories.includes(cleanedValue)) {
 				return `Invalid category: ${row[i]}`;
 			}
 		}
@@ -105,7 +119,10 @@ function validateOtherEventData(rows: any[]): string | undefined {
 	return undefined;
 }
 
-function getXlsData(base64String: string): any {
+function getXlsData(base64String: string): {
+	columnNames: string[];
+	data: string[][];
+} {
 	try {
 		const base64Data = base64String.replace(/^data:.*?;base64,/, "");
 		const buffer = Buffer.from(base64Data, "base64");
@@ -126,16 +143,18 @@ function getXlsData(base64String: string): any {
 			blankrows: false,
 			rawNumbers: false,
 		});
-
-		// Extract rows (excluding headers)
-		const rows: any = data.slice(1);
+		// Extract rows (excluding headers) and ensure proper typing
+		const rows = data.slice(1) as string[][];
 
 		return {
-			columnNames: data[0],
+			columnNames: data[0] as string[],
 			data: rows,
 		};
-	} catch (error: any) {
-		throw new Error(`Failed to parse Excel file: ${error.message}`);
+	} catch (error: unknown) {
+		if (error instanceof Error) {
+			throw new Error(`Failed to parse Excel file: ${error.message}`);
+		}
+		throw new Error('Failed to parse Excel file: Unknown error');
 	}
 }
 
@@ -152,18 +171,12 @@ function fixDate(str: string): string {
 async function handleMusicEvents(
 	base64String: string
 ): Promise<mongoose.Document[]> {
-	let events, res, columnNames;
-	try {
-		res = getXlsData(base64String);
-		const error: string | undefined = validateMusicEventData(res.data);
-		if (error) {
-			throw new Error(error);
-		}
-		events = res.data;
-		columnNames = res.columnNames;
-	} catch (err: any) {
-		throw err;
+	const res = getXlsData(base64String);
+	const error: string | undefined = validateMusicEventData(res.data);
+	if (error) {
+		throw new Error(error);
 	}
+	const events = res.data;
 	const insertedEvents: mongoose.Document[] = [];
 
 	await EventModel.deleteMany({});
@@ -186,17 +199,12 @@ async function handleMusicEvents(
 async function handleOtherEvents(
 	base64String: string
 ): Promise<mongoose.Document[]> {
-	let events, res;
-	try {
-		res = getXlsData(base64String);
-		const error: string | undefined = validateOtherEventData(res.data);
-		if (error) {
-			throw new Error(error);
-		}
-		events = res.data;
-	} catch (err: any) {
-		throw err;
+	const res = getXlsData(base64String);
+	const error: string | undefined = validateOtherEventData(res.data);
+	if (error) {
+		throw new Error(error);
 	}
+	const events = res.data;
 
 	const insertedEvents: mongoose.Document[] = [];
 
@@ -231,7 +239,7 @@ async function handleOtherEvents(
 export async function POST(req: NextRequest) {
 	try {
 		await connectDb();
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.log(err);
 		return NextResponse.json(
 			{ err: "Could not connect to db" },
@@ -244,7 +252,7 @@ export async function POST(req: NextRequest) {
 		const body = await req.json();
 		fileBase64 = body.file;
 		type = body.type;
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.log(err);
 		return NextResponse.json(
 			{ err: "Could not convert request body to json" },
@@ -256,19 +264,29 @@ export async function POST(req: NextRequest) {
 	if (type === "music") {
 		try {
 			events = await handleMusicEvents(fileBase64);
-		} catch (err: any) {
-			console.log(err);
-			return NextResponse.json({ message: err.message }, { status: 500 });
-		 }
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				console.log(err.message);
+				return NextResponse.json({ message: err.message }, { status: 500 });
+			} else {
+				console.log(err);
+				return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+			}
+		}
 	} else if (type === "other") {
 		try {
 			events = await handleOtherEvents(fileBase64);
-		} catch (err: any) {
-			console.log(err);
-			return NextResponse.json({ message: err.message }, { status: 500 });
+		} catch (err: unknown) {
+			if (err instanceof Error) {
+				console.log(err.message);
+				return NextResponse.json({ message: err.message }, { status: 500 });
+			} else {
+				console.log(err);
+				return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+			}
 		}
 	} else {
-		// TODO: Throw an error because it is an unknown spreadsheet type
+		return NextResponse.json({ message: "Unknown spreadsheet type" }, { status: 500 });
 	}
 
 	return NextResponse.json({ events: events }, { status: 200 });

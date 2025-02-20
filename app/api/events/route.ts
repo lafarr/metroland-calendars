@@ -1,6 +1,7 @@
 import { connectDb } from "@/app/lib/utils";
 import { EventModel } from "@/app/lib/models/event-model";
 import { NextRequest, NextResponse } from "next/server";
+import { MusicEvent } from "@/app/lib/types";
 
 function getCaptureGroups(pattern: RegExp, str: string): string[] {
 	const matches = pattern.exec(str);
@@ -16,16 +17,19 @@ export async function GET() {
 		const now = new Date();
 		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-		const cleanedEvents: any[] = events.filter((event: any) => {
+		const cleanedEvents: MusicEvent[] = events.filter((event: MusicEvent) => {
 			const date = event.date;
-			let year = getCaptureGroups(pattern, date).at(-1);
-			if (year?.length === 2) {
-				year = "20" + year;
+			if (typeof date === 'string') {
+				let year = getCaptureGroups(pattern, date).at(-1);
+				if (year?.length === 2) {
+					year = "20" + year;
+				}
+				const [month, day, _] = date.split('/');
+				return new Date(parseInt(year ?? ''), parseInt(month) - 1, parseInt(day)) >= today;
 			}
-			const [month, day, _] = date.split('/');
-			return new Date(parseInt(year ?? ''), parseInt(month) - 1, parseInt(day)) >= today;
+			return new Date(date) >= today;
 		})
-			.map((event, idx: number) => {
+			.map((event) => {
 				return {
 					_id: event._id,
 					artist: event.artist,
@@ -49,7 +53,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
 	try {
 		await connectDb();
-	} catch (err) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not connect to database' }, { status: 500 });
 	}
 
@@ -59,7 +63,7 @@ export async function POST(req: NextRequest) {
 	try {
 		newEventData = await req.json();
 		newEvent = new EventModel();
-	} catch (err) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not convert request body to JSON' }, { status: 500 });
 	}
 
@@ -69,7 +73,7 @@ export async function POST(req: NextRequest) {
 
 	try {
 		await newEvent.save();
-	} catch (err) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not save new event to database' }, { status: 500 });
 	}
 
@@ -79,7 +83,7 @@ export async function POST(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
 	try {
 		await connectDb();
-	} catch (err) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not connect to database' }, { status: 500 });
 	}
 
@@ -88,7 +92,7 @@ export async function DELETE(req: NextRequest) {
 
 	try {
 		await EventModel.deleteOne({ _id: id });
-	} catch (err) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not delete document from collection' }, { status: 500 });
 	}
 
@@ -98,14 +102,14 @@ export async function DELETE(req: NextRequest) {
 export async function PUT(req: NextRequest) {
 	try {
 		await connectDb();
-	} catch (err) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not connect to database' }, { status: 500 });
 	}
 
 	let body = null;
 	try {
 		body = await req.json();
-	} catch (err: any) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not convert body to JSON' }, { status: 500 });
 	}
 
@@ -117,7 +121,7 @@ export async function PUT(req: NextRequest) {
 		}
 		await doc.save();
 		return NextResponse.json({ event: doc }, { status: 200 });
-	} catch (err) {
+	} catch (_) {
 		return NextResponse.json({ error: 'Could not update the given document' }, { status: 500 });
 	}
 }

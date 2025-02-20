@@ -2,12 +2,18 @@
 
 import React, { useState, useRef } from 'react';
 
-const ModernFilePicker = (props: any) => {
-	const [file, setFile] = useState<any>(null);
-	const fileInputRef = useRef<any>(null);
+interface ModernFilePickerProps {
+  onChange?: (file: File | null) => void;
+  type: 'image' | 'csv';
+  text: string;
+}
 
-	const handleFileChange = (event: any) => {
-		const selectedFile = event.target.files[0];
+const ModernFilePicker = (props: ModernFilePickerProps) => {
+	const [file, setFile] = useState<File | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const selectedFile = event.target.files?.[0];
 		if (selectedFile) {
 			setFile(selectedFile);
 			if (props.onChange) {
@@ -16,11 +22,11 @@ const ModernFilePicker = (props: any) => {
 		}
 	};
 
-	const handleDragOver = (event: any) => {
+	const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
 		event.preventDefault();
 	};
 
-	const handleDrop = (event: any) => {
+	const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		const droppedFile = event.dataTransfer.files[0];
 		if (droppedFile) {
@@ -66,7 +72,7 @@ const ModernFilePicker = (props: any) => {
 					transition: 'background-color 0.3s',
 					backgroundColor: '#2a2727',
 				}}
-				onClick={() => fileInputRef.current.click()}
+				onClick={() => fileInputRef.current?.click()}
 				onDragOver={handleDragOver}
 				onDrop={handleDrop}
 			>

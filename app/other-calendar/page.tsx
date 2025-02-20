@@ -8,6 +8,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './styles.css';
 import { useRouter } from 'next/navigation';
 import Dropdown from '../lib/Dropdown';
+import * as types from '@/app/lib/types';
 
 enum Categories {
 	visualArts,
@@ -18,11 +19,11 @@ enum Categories {
 }
 
 const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
-	const [selectedDate, setSelectedDate] = useState<any>(new Date());
-	const [weekDates, setWeekDates] = useState<any>([]);
-	const [showAllEvents, setShowAllEvents] = useState<any>(false);
-	const [filteredEvents, setFilteredEvents] = useState<any>(null);
-	const [displayedEvents, setDisplayedEvents] = useState<any>(null);
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const [weekDates, setWeekDates] = useState<Date[]>([]);
+	const [showAllEvents, setShowAllEvents] = useState<boolean>(false);
+	const [filteredEvents, setFilteredEvents] = useState<types.OtherEvent[]>([]);
+	const [displayedEvents, setDisplayedEvents] = useState<types.OtherEvent[]>([]);
 
 
 	useEffect(() => {
@@ -30,18 +31,20 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 			.then((response) => {
 				if (!response.ok)
 					return response.json()
-						.then(({ events }: any) => {
+						.then(({ events }: { events: types.OtherEvent[] }) => {
 							const tmp = [];
 							for (const e of events) {
 								const tmpE = e;
 								tmpE.title = `${e.title} @ ${e.venue}`
-								const [startMonth, startDay, startYear] = tmpE.start.split("/");
-								const [endMonth, endDay, endYear] = tmpE.end.split("/");
-								tmpE.start = new Date(parseInt(startYear), parseInt(startMonth), parseInt(startDay));
-								tmpE.end = new Date(parseInt(endYear), parseInt(endMonth), parseInt(endDay));
+								if (typeof tmpE.start === 'string' && typeof tmpE.end === 'string') {
+									const [startMonth, startDay, startYear] = tmpE.start.split("/");
+									const [endMonth, endDay, endYear] = tmpE.end.split("/");
+									tmpE.start = new Date(parseInt(startYear), parseInt(startMonth), parseInt(startDay));
+									tmpE.end = new Date(parseInt(endYear), parseInt(endMonth), parseInt(endDay));
+								}
 								tmp.push(tmpE);
 							}
-							const fEvents = tmp.filter((event: any) => event.start <= selectedDate && event.end >= selectedDate);
+							const fEvents = tmp.filter((event: types.OtherEvent) => event.start <= selectedDate && event.end >= selectedDate);
 							setFilteredEvents(fEvents);
 							setDisplayedEvents(showAllEvents ? fEvents : fEvents.slice(0, 4));
 						})
@@ -54,7 +57,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 		setShowAllEvents(false);
 	}, [selectedDate]);
 
-	const getWeekDates = (date: any) => {
+	const getWeekDates = (date: Date) => {
 		const week = [];
 		for (let i = 0; i < 7; i++) {
 			const day = new Date(date);
@@ -84,7 +87,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 					<ChevronLeft className="w-6 h-6" />
 				</button>
 				<div className="flex space-x-1 sm:space-x-2 overflow-x-auto">
-					{weekDates.map((date: any) => (
+					{weekDates.map((date: Date) => (
 						<button
 							key={date.toISOString()}
 							onClick={() => setSelectedDate(date)}
@@ -102,7 +105,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 				</button>
 			</div>
 			<div className="p-4 text-center">
-				{displayedEvents?.map((event: any) => (
+				{displayedEvents?.map((event: types.OtherEvent) => (
 					<div key={event._id} className="mb-2 p-2">
 						<p className="font-semibold text-[#faff00]">{event.title.toLowerCase()}</p>
 						<p className="text-sm text-gray-200">@ {event.venue.toLowerCase()}</p>
@@ -124,21 +127,21 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 
 function DesktopCalendar({ customClasses }: Readonly<{ customClasses: string }>) {
 	const [currentDate, setCurrentDate] = useState(new Date());
-	const [realEvents, setRealEvents] = useState<any[]>([]);
-	const [ready, setReady] = useState<boolean>(false);
+	const [realEvents, setRealEvents] = useState<types.OtherEvent[]>([]);
+	const [, setReady] = useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const router = useRouter();
 	const localizer = momentLocalizer(moment);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [categoryFilter, setCategoryFilter] = useState<Categories | null>(null);
 
-	const CustomEvent = ({ event }: any) => (
+	const CustomEvent = ({ event }: { event: types.OtherEvent }) => (
 		<div style={{ width: '100%', color: 'black' }} className="custom-event">
-			{<a href={event.link} target="_blank" className="weekly w-full overflow-hidden text-ellipsis">{event.title}</a>}
+			{<a href={event.link} rel="noreferrer" target="_blank" className="weekly w-full overflow-hidden text-ellipsis">{event.title}</a>}
 		</div>
 	);
 
-	const CustomMonthDateHeader = ({ date }: any) => (
+	const CustomMonthDateHeader = ({ date }: { date: Date }) => (
 		<div style={{ fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }} className="custom-date-header">
 			<span className="rbc-button-link" onClick={() => {
 				date = new Date(date);
@@ -208,7 +211,7 @@ function DesktopCalendar({ customClasses }: Readonly<{ customClasses: string }>)
 			</button>
 			<div className="input-container">
 				<Search className="absolute text-gray-200 right-[90%]" />
-				<input type="text" ref={inputRef} className="search-input focus:outline-none" onChange={(e: any) => setSearchQuery(e.target.value)} value={searchQuery} />
+				<input type="text" ref={inputRef} className="search-input focus:outline-none" onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)} value={searchQuery} />
 			</div>
 		</div>
 	);
@@ -233,7 +236,7 @@ function DesktopCalendar({ customClasses }: Readonly<{ customClasses: string }>)
 					tmpE.end = new Date(parseInt(endYear), parseInt(endMonth) - 1, parseInt(endDay));
 					realEvents.push(tmpE);
 				}
-				setRealEvents(realEvents.filter((e: any) => {
+				setRealEvents(realEvents.filter((e: types.OtherEvent) => {
 					let categoryFilterString = '';
 					switch (categoryFilter) {
 						case Categories.visualArts:
@@ -251,8 +254,6 @@ function DesktopCalendar({ customClasses }: Readonly<{ customClasses: string }>)
 						case Categories.comedy:
 							categoryFilterString = 'Comedy';
 							break;
-						default:
-							categoryFilterString = '';
 					}
 					if (categoryFilterString)
 						return e.category === categoryFilterString && e.title.toLowerCase().includes(searchQuery)
@@ -309,11 +310,9 @@ export default function OtherCalendar() {
 
 	useEffect(() => { setReady(true); }, []);
 	return (
-		<>
-			<div className="min-h-screen">
-				{ready && <><DesktopCalendar customClasses={"hidden md:block"} />
-					<MobileCalendar customClasses={"md:hidden"} /></>}
-			</div>
-		</>
+		<div className="min-h-screen">
+			{ready && <><DesktopCalendar customClasses={"hidden md:block"} />
+				<MobileCalendar customClasses={"md:hidden"} /></>}
+		</div>
 	)
 }

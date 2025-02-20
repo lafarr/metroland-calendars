@@ -3,29 +3,32 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import './EventManagement.css';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import ModernFilePicker from './ModernFilePicker';
 import AdminEventsGrid from './admin-events-grid';
+import { Filter, MusicEvent, OtherEvent } from '@/app/lib/types';
 
 const AdminEvents = () => {
-	const [events, setEvents] = useState<any>([]);
+	const [events, setEvents] = useState<MusicEvent[] | OtherEvent[]>([]);
 
-	const [filters] = useState<any>({ artist: '', date: '', venue: '', town: '' });
-	const [, setFilteredEvents] = useState<any[]>(events);
-	const [csv, setCsv] = useState<any>(null);
+	const [filters] = useState<Filter>({ artist: '', date: '', venue: '', town: '' });
+	const [, setFilteredEvents] = useState<MusicEvent[] | OtherEvent[]>(events);
+	const [csv, setCsv] = useState<string | null>(null);
 	const [selectedCsvType, setSelectedCsvType] = useState<string>('music');
 	const [uploadError, setUploadError] = useState<string | null>(null);
 	const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
 	const [fileUploadIsLoading, setFileUploadIsLoading] = useState<boolean>(false);
 	const [selectedGridType, setSelectedGridType] = useState<string>('music');
 
-	function csvToBase64(file: any) {
+	function csvToBase64(file: File | null) {
 		if (file) {
 			setUploadError(null);
 			const reader = new FileReader();
-			reader.onload = (e: any) => {
-				const base64 = e?.target?.result?.split(',')[1];
-				setCsv(base64);
+			reader.onload = (e: ProgressEvent<FileReader>) => {
+				const base64 = e.target?.result?.toString().split(',')[1];
+				if (base64) {
+					setCsv(base64);
+				}
 			};
 			reader.readAsDataURL(file);
 		}
@@ -38,16 +41,19 @@ const AdminEvents = () => {
 			})
 			.catch(err => console.log(err));
 	}, [])
-
 	useEffect(() => {
-		const filtered = events.filter((event: any) => {
-			const [month, day, year] = event.date.split('/');
-			const filterDate = `20${year}-${month}-${day}`;
-			return (
-				event.artist.toLowerCase().includes(filters.artist.toLowerCase()) &&
-				(filterDate === filters.date || !filters.date) &&
-				event.venue.toLowerCase().includes(filters.venue.toLowerCase())
-			)
+		const filtered = events.filter((event): event is MusicEvent => {
+			if (!('date' in event) || !('artist' in event) || !('venue' in event)) return false;
+			if (typeof event.date === 'string') {
+				const [month, day, year] = event.date.split('/');
+				const filterDate = `20${year}-${month}-${day}`;
+				return (
+					event.artist.toLowerCase().includes(filters.artist.toLowerCase()) &&
+					(filterDate === filters.date || !filters.date) &&
+					event.venue.toLowerCase().includes(filters.venue.toLowerCase())
+				)
+			}
+			return false;
 		});
 		setFilteredEvents(filtered);
 	}, [events, filters]);
@@ -58,7 +64,7 @@ const AdminEvents = () => {
 			file: csv,
 			type: selectedCsvType
 		})
-			.then((_: any) => {
+			.then((_: AxiosResponse) => {
 				axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 					.then(res => {
 						setEvents(res.data.events || []);
@@ -102,7 +108,7 @@ const AdminEvents = () => {
 							<button onClick={() => setSelectedCsvType('music')} className={`${selectedCsvType !== 'music' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'music' ? ' opacity-30' : ' opacity-100'}`}>Music events</button>
 							<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
 						</div>
-						<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} />
+						<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} type={'csv'} />
 						<div className='flex justify-center gap-4'>
 							<button onClick={handleCsvSubmit}
 								className="rounded h-10 w-80 text-white bg-[#4CAF50]">

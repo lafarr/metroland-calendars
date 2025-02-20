@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import Dropdown from '../lib/Dropdown';
+import * as types from '@/app/lib/types';
 
 export default function DesktopCalendar() {
 	const [showingMonthly, setShowingMonthly] = useState<boolean>(true);
@@ -14,19 +15,17 @@ export default function DesktopCalendar() {
 	const [view, setView] = useState<string>('month');
 	const [currentDate, setCurrentDate] = useState<Date>(new Date());
 	const [filterValue, setFilterValue] = useState<string>('');
-	const [events, setEvents] = useState<any[]>([]);
-	const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+	const [events, setEvents] = useState<(types.MusicEvent & { start: Date, end: Date })[]>([]);
+	const [filteredEvents, setFilteredEvents] = useState<(types.MusicEvent & { start: Date, end: Date })[]>([]);
 	const localizer = momentLocalizer(moment);
 
-	const handleFilter = useCallback((e: any) => {
+	const handleFilter = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const val = e.target.value;
 		setFilterValue(val);
-		setFilteredEvents(_ => events.filter((event: any) => event.artist.toLowerCase().includes(val.toLowerCase())
+		setFilteredEvents(_ => events.filter((event: types.MusicEvent & { start: Date, end: Date }) => event.artist.toLowerCase().includes(val.toLowerCase())
 			|| event.venue.toLowerCase().includes(val.toLowerCase())
-			|| event.town.toLowerCase().includes(val.toLowerCase())
 		))
 	}, [events, setFilteredEvents]);
-
 
 	const handlePrevMonth = () => {
 		setCurrentDate(prevDate => moment(prevDate).subtract(1, 'month').toDate());
@@ -59,24 +58,32 @@ export default function DesktopCalendar() {
 
 	useEffect(() => {
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
-			.then((res: any) => {
+			.then((res: Response) => {
 				return res.json()
-					.then(({ events: reqEvents }: any) => {
-						const tmpEvents = reqEvents.map((event: any) => {
-							let [month, day, year] = event.date.split('/');
-							const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-							return (
-								{
+					.then(({ events: reqEvents }: { events: (types.MusicEvent & { start: Date, end: Date })[] }) => {
+						const tmpEvents: (types.MusicEvent & { start: Date, end: Date })[] = reqEvents.map((event: types.MusicEvent) => {
+							if (typeof event.date === 'string') {
+								console.log('WE ARE IN THE RIGHT ONE');
+								const [month, day, year] = event.date.split('/');
+								const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+								event.date = date;
+								return ({
 									...event,
-									date: date,
 									start: date,
 									end: date
 								}
-							)
+								)
+							}
+							return ({
+								...event,
+								start: event.date,
+								end: event.date
+							})
 						});
 						setEvents(tmpEvents);
 						setFilteredEvents(tmpEvents);
-						console.log(typeof reqEvents[0].start);
+						console.log(tmpEvents);
+						console.log(tmpEvents);
 					})
 			})
 	}, []);
@@ -113,7 +120,7 @@ export default function DesktopCalendar() {
 		className: 'custom-day-bg',
 	});
 
-	const CustomMonthDateHeader = ({ date }: { date: any }) => (
+	const CustomMonthDateHeader = ({ date }: { date: Date }) => (
 		<div style={{ fontSize: '16px', fontWeight: 'bold', cursor: 'pointer', textAlign: 'right' }} className="custom-date-header">
 			<span className="rbc-button-link" onClick={() => {
 				date = new Date(date);
@@ -131,13 +138,13 @@ export default function DesktopCalendar() {
 		</div >
 	);
 
-	const CustomMonthHeader = ({ label }: { date: any, label: any }) => (
+	const CustomMonthHeader = ({ label }: { date: Date, label: string }) => (
 		<div className="custom-month-header">
 			{label}
 		</div>
 	);
 
-	const CustomWeeklyHeader = ({ date, label }: { date?: any, label?: any, onHeaderClick?: any }) => (
+	const CustomWeeklyHeader = ({ date, label }: { date: Date, label: string }) => (
 		<span className="rbc-button-link" onClick={() => {
 			date = new Date(date);
 			let month = (date.getMonth() + 1).toString();
@@ -155,7 +162,7 @@ export default function DesktopCalendar() {
 		</span>
 	);
 
-	const CustomEvent = ({ event }: { event: any }) => (
+	const CustomEvent = ({ event }: { event: types.MusicEvent & { start: Date, end: Date } }) => (
 		<div onClick={() => window.open(event.link, '_blank')} style={{ fontWeight: 'bold', color: 'lightgray' }} className="custom-event">
 			{showingMonthly ?
 				<p className="weekly">{`${event.artist.toLowerCase()} @ ${event.venue.toLowerCase()}`}</p> :
@@ -163,7 +170,6 @@ export default function DesktopCalendar() {
 					<p className="weekly weekly-artist">{event.artist.toLowerCase()}</p>
 					<p className="weekly">{event.time.toLowerCase()}</p>
 					<p className="weekly">{event.venue.toLowerCase()}</p>
-					<p className="weekly">{event.town.toLowerCase()}</p>
 				</>}
 		</div>
 	);

@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import * as types from '@/app/lib/types';
 
 export default function MobileCalendar() {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-	const [weekDates, setWeekDates] = useState<any>([]);
-	const [showAllEvents, setShowAllEvents] = useState<any>(false);
-	const [filteredEvents] = useState<any>(null);
-	const [displayedEvents] = useState<any>(null);
+	const [weekDates, setWeekDates] = useState<Date[]>([]);
+	const [showAllEvents, setShowAllEvents] = useState<boolean>(false);
+	const [filteredEvents] = useState<types.MusicEvent[]>([]);
+	const [displayedEvents] = useState<types.MusicEvent[]>([]);
 
 	useEffect(() => {
 		const dates = getWeekDates(selectedDate);
@@ -16,7 +17,7 @@ export default function MobileCalendar() {
 		setShowAllEvents(false);
 	}, [selectedDate]);
 
-	const getWeekDates = (date: any) => {
+	const getWeekDates = (date: Date) => {
 		const week = [];
 		for (let i = 0; i < 7; i++) {
 			const day = new Date(date);
@@ -46,7 +47,7 @@ export default function MobileCalendar() {
 					<ChevronLeft className="w-6 h-6" />
 				</button>
 				<div className="flex space-x-1 sm:space-x-2 overflow-x-auto">
-					{weekDates.map((date: any) => (
+					{weekDates.map((date: Date) => (
 						<button
 							key={date.toISOString()}
 							onClick={() => setSelectedDate(date)}
@@ -64,7 +65,7 @@ export default function MobileCalendar() {
 				</button>
 			</div>
 			<div className="p-4 text-center">
-				{displayedEvents?.map((event: any) => (
+				{displayedEvents?.map((event: types.MusicEvent) => (
 					<div key={event._id} className="mb-2 p-2">
 						<p className="font-semibold text-[#faff00] cursor-pointer hover:opacity-80" onClick={() => window.open(event.link, '_blank')}>{event.artist.toLowerCase()}</p>
 						<p className="text-sm text-gray-200" onClick={() => window.open(event.link, '_blank')}>{event.venue.toLowerCase()}</p>

@@ -1,6 +1,8 @@
 import OtherEvent from "@/app/lib/models/other-event-model";
 import { connectDb } from "@/app/lib/utils";
 import { NextResponse } from "next/server";
+import * as types from "@/app/lib/types";
+
 
 function getCaptureGroups(pattern: RegExp, str: string): string[] {
 	const matches = pattern.exec(str);
@@ -16,17 +18,23 @@ export async function GET() {
 		const now = new Date();
 		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-		const cleanedEvents: any[] = events.filter((event: any) => {
+		const cleanedEvents: types.OtherEvent[] = events.filter((event: types.OtherEvent) => {
 			const date = event.end;
-			const endCaptures = getCaptureGroups(pattern, date);
-			let endYear = endCaptures[endCaptures.length - 1];
-			if (endYear?.length === 2) {
-				endYear = "20" + endYear;
+			let endYear;
+			if (typeof date === 'string') {
+				const endCaptures = getCaptureGroups(pattern, date);
+				endYear = endCaptures[endCaptures.length - 1];
+				if (endYear?.length === 2) {
+					endYear = "20" + endYear;
+				}
+				if (typeof date === 'string') {
+					const [month, day] = date.split('/');
+					return new Date(parseInt(endYear ?? ''), parseInt(month) - 1, parseInt(day)) >= today;
+				}
 			}
-			const [month, day, _] = date.split('/');
-			return new Date(parseInt(endYear ?? ''), parseInt(month) - 1, parseInt(day)) >= today;
+			return new Date(parseInt(endYear ?? ''), date.getMonth(), date.getDate()) >= today;
 		})
-			.map((event, idx: number) => {
+			.map((event) => {
 				const startCaptures = getCaptureGroups(pattern, event.start);
 				const endCaptures = getCaptureGroups(pattern, event.end);
 				let startYear = startCaptures[startCaptures.length - 1]

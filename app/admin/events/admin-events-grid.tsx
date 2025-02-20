@@ -5,9 +5,11 @@ import AdminEvent from './admin-event';
 import './EventManagement.css';
 import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import React from 'react';
+import { MusicEvent, OtherEvent } from '@/app/lib/types'
 
-export default function AdminEventsGrid({ eventType }: any) {
-	const [events, setEvents] = useState([]);
+export default function AdminEventsGrid({ eventType }: Readonly<{ eventType: string }>) {
+	const [events, setEvents] = useState<MusicEvent[] | OtherEvent[]>([]);
 	const [gridIsLoading, setGridIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -44,7 +46,7 @@ export default function AdminEventsGrid({ eventType }: any) {
 				</div>
 			)}
 			{!gridIsLoading && <div className="mt-8 grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-				{events.map((event: any) => (
+				{events.map((event: MusicEvent | OtherEvent) => (
 					<AdminEvent eventType={eventType} key={event._id} event={event} />
 				))}
 			</div>}
