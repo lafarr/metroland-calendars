@@ -12,7 +12,6 @@ function getCaptureGroups(pattern: RegExp, str: string): string[] {
 }
 
 function validateMusicEventData(rows: string[][]): string | undefined {
-
 	const datePattern = /(\d\d?)\s*[/-]\s*(\d\d?)\s*[/-]\s*(\d\d\d?\d?)\s*/;
 	const timePattern = /(\d\d?):(\d\d)\s*([ap]m)?/;
 
@@ -56,15 +55,9 @@ function validateMusicEventData(rows: string[][]): string | undefined {
 }
 
 function validateOtherEventData(rows: string[][]): string | undefined {
-	// MM/DD/YYYY, MM/DD/YYYY, HH:MM, Title, Location, Website, [theater, film, poetry, visual arts]
-	// start date, end date, time, title, location, website, category
 	const datePattern = /(\d\d?)\s*[/-]\s*(\d\d?)\s*[/-]\s*(\d\d\d?\d?)\s*/;
-	const timePattern = /(\d\d?):(\d\d)\s*([ap]m)?/;
+	const timePattern = /(\d\d?):(\d\d)\s*([apAP][mM])?/;
 	const validCategories = ["theater", "film", "poetry", "visual arts", "comedy"];
-
-	// need to check dates - start date can be ongoing, end date can be n/a
-	// need to check time
-	// need to check category
 
 	for (const row of rows) {
 		if (row.length !== 7) {
@@ -132,22 +125,29 @@ function getXlsData(base64String: string): {
 			cellDates: false,
 		});
 
-		// TODO: Look into this, we may need to iterate over all sheet names if we get lots of events in the future
-		const sheetName = workbook.SheetNames[0];
-		const worksheet = workbook.Sheets[sheetName];
+		const rows: string[][] = [];
+		let columnNames: string[] = [];
+		workbook.SheetNames.forEach((sheetName, idx) => {
+			const worksheet = workbook.Sheets[sheetName];
 
-		const data = xlsx.utils.sheet_to_json(worksheet, {
-			header: 1,
-			raw: false,
-			defval: "",
-			blankrows: false,
-			rawNumbers: false,
-		});
-		// Extract rows (excluding headers) and ensure proper typing
-		const rows = data.slice(1) as string[][];
+			const data = xlsx.utils.sheet_to_json(worksheet, {
+				header: 1,
+				raw: false,
+				defval: "",
+				blankrows: false,
+				rawNumbers: false,
+			});
+
+			if (idx === 0) {
+				columnNames = data[0] as string[];
+			}
+
+			const localRows = data.slice(1) as string[][];
+			rows.push(...localRows);
+		})
 
 		return {
-			columnNames: data[0] as string[],
+			columnNames: columnNames,
 			data: rows,
 		};
 	} catch (error: unknown) {
@@ -161,10 +161,6 @@ function getXlsData(base64String: string): {
 function fixDate(str: string): string {
 	const datePattern = /(\d\d?)\s*[/-]\s*(\d\d?)\s*[/-]\s*(\d\d\d?\d?)\s*/;
 	const [month, day, year] = getCaptureGroups(datePattern, str);
-	if (!year) {
-		console.log("messed up date");
-		console.log(str);
-	}
 	return `${month}/${day}/${year.length === 2 ? "20" + year : year}`;
 }
 
@@ -251,11 +247,17 @@ export async function POST(req: NextRequest) {
 	try {
 		const body = await req.json();
 		fileBase64 = body.file;
+		if (!fileBase64) {
+			return NextResponse.json(
+				{ err: "Not a valid CSV" },
+				{ status: 500 }
+			);
+		}
 		type = body.type;
 	} catch (err: unknown) {
 		console.log(err);
 		return NextResponse.json(
-			{ err: "Could not convert request body to json" },
+			{ err: "Could not convert request body to JSON" },
 			{ status: 500 }
 		);
 	}
@@ -279,14 +281,14 @@ export async function POST(req: NextRequest) {
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				console.log(err.message);
-				return NextResponse.json({ message: err.message }, { status: 500 });
+				return NextResponse.json({ err: err.message }, { status: 500 });
 			} else {
 				console.log(err);
-				return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+				return NextResponse.json({ err: "Unknown error" }, { status: 500 });
 			}
 		}
 	} else {
-		return NextResponse.json({ message: "Unknown spreadsheet type" }, { status: 500 });
+		return NextResponse.json({ err: "Unknown spreadsheet type" }, { status: 500 });
 	}
 
 	return NextResponse.json({ events: events }, { status: 200 });

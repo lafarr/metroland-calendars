@@ -8,8 +8,7 @@ import { Loader2 } from 'lucide-react';
 import React from 'react';
 import { MusicEvent, OtherEvent } from '@/app/lib/types'
 
-export default function AdminEventsGrid({ eventType }: Readonly<{ eventType: string }>) {
-	const [events, setEvents] = useState<MusicEvent[] | OtherEvent[]>([]);
+export default function AdminEventsGrid({ eventType, events, setEvents }: { eventType: string, events: (MusicEvent | OtherEvent)[], setEvents: React.Dispatch<React.SetStateAction<MusicEvent[] | OtherEvent[]>> }) {
 	const [gridIsLoading, setGridIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {

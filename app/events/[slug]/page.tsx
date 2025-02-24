@@ -25,8 +25,6 @@ const EventList = () => {
 			aMinutes = parseInt(aMinutes);
 			if (aMorningOrNight === 'PM') {
 				aHours += 12;
-				console.log('here are the sorted events: ');
-				console.log(events);
 			}
 
 			const [bTime, bMorningOrNight] = b.time.split(' ');
@@ -79,7 +77,6 @@ const EventList = () => {
 
 						const longDay = new Date(slug).toLocaleString('default', { weekday: 'long' });
 						const longMonth = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toLocaleString('default', { month: 'long' });
-						console.log('longMonth: ' + (parseInt(month) - 1));
 						setNiceDate(`${longDay}, ${longMonth} ${day}, ${year}`);
 					})
 			} else if (query === 'other') {
@@ -101,7 +98,6 @@ const EventList = () => {
 
 						const longDay = new Date(slug).toLocaleString('default', { weekday: 'long' });
 						const longMonth = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toLocaleString('default', { month: 'long' });
-						console.log('longMonth: ' + (parseInt(month) - 1));
 						setNiceDate(`${longDay}, ${longMonth} ${day}, ${year}`);
 					})
 			}
