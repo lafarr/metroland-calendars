@@ -275,7 +275,7 @@ export default function DesktopCalendar() {
 						console.log('showing the blah')
 						console.log(blah);
 						router.push(
-							`/events/${blah.getMonth() - 1}-${blah.getDate()}-${blah[0].getFullYear().toString()}`,
+							`/events/${blah.getMonth() - 1}-${blah.getDate()}-${blah.getFullYear().toString()}`,
 						);
 					}}
 					components={{
