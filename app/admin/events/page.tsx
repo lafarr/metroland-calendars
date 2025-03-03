@@ -9,16 +9,15 @@ import AdminEventsGrid from './admin-events-grid';
 import { Filter, MusicEvent, OtherEvent } from '@/app/lib/types';
 
 const AdminEvents = () => {
-	const [events, setEvents] = useState<MusicEvent[] | OtherEvent[]>([]);
+	const [events, setEvents] = useState<(MusicEvent| OtherEvent)[]>([]);
 
 	const [filters] = useState<Filter>({ artist: '', date: '', venue: '', town: '' });
-	const [, setFilteredEvents] = useState<MusicEvent[] | OtherEvent[]>(events);
+	const [, setFilteredEvents] = useState<(MusicEvent|OtherEvent)[]>(events);
 	const [csv, setCsv] = useState<string>('');
 	const [selectedCsvType, setSelectedCsvType] = useState<string>('music');
 	const [uploadError, setUploadError] = useState<string | null>(null);
 	const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
 	const [fileUploadIsLoading, setFileUploadIsLoading] = useState<boolean>(false);
-	const [selectedGridType, setSelectedGridType] = useState<string>('music');
 
 	function csvToBase64(file: File | null) {
 		if (file) {
@@ -38,12 +37,21 @@ const AdminEvents = () => {
 	}
 
 	useEffect(() => {
-		axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
-			.then((res) => {
-				setEvents(res.data.events || []);
+		const musicEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
+		const otherEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
+		const tmpNewEvents: (MusicEvent|OtherEvent)[] = []
+		Promise.all([musicEventsPromise, otherEventsPromise])
+			.then((resolvedPromises) => {
+				for (const resolvedPromise of resolvedPromises) {
+					for (const newEvent of resolvedPromise.data.events) {
+						tmpNewEvents.push(newEvent);
+					}
+				}
+				setEvents(tmpNewEvents);
 			})
 			.catch(err => console.log(err));
 	}, [])
+
 	useEffect(() => {
 		const filtered = events.filter((event): event is MusicEvent => {
 			if (!('date' in event) || !('artist' in event) || !('venue' in event)) return false;
@@ -68,9 +76,17 @@ const AdminEvents = () => {
 			type: selectedCsvType
 		})
 			.then(() => {
-				axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
-					.then(res => {
-						setEvents(res.data.events || []);
+				const musicEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
+				const otherEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
+				const tmpNewEvents: (MusicEvent|OtherEvent)[] = [];
+				Promise.all([musicEventsPromise, otherEventsPromise])
+					.then((resolvedPromises) => {
+						for (const resolvedPromise of resolvedPromises) {
+							for (const newEvent of resolvedPromise.data.events) {
+								tmpNewEvents.push(newEvent);
+							}
+						}
+						setEvents(tmpNewEvents);
 						setUploadError(null);
 						setUploadSuccess(true);
 						setTimeout(() => setUploadSuccess(false), 5000);
@@ -121,19 +137,7 @@ const AdminEvents = () => {
 					</>}
 				</div>
 			</div>
-			<div className='flex justify-center gap-4'>
-				<button onClick={() => setSelectedGridType('music')}
-					className={`${selectedGridType !== 'music' ? 'hover:opacity-75 ' : ''}
-				rounded h-10 w-80 text-black bg-[#faff00]${selectedGridType === 'music' ? ' opacity-30' : ' opacity-100'}`}>
-					Music events
-				</button>
-				<button onClick={() => setSelectedGridType('other')}
-					className={`${selectedGridType !== 'other' ? 'hover:opacity-75 ' : ''}
-				rounded h-10 w-80 text-black bg-[#faff00]${selectedGridType === 'other' ? ' opacity-30' : ' opacity-100'}`}>
-					Other events
-				</button>
-			</div>
-			<AdminEventsGrid events={events} setEvents={setEvents} eventType={selectedGridType} />
+			<AdminEventsGrid events={events} />
 		</div>
 	);
 };

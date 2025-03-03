@@ -269,10 +269,10 @@ export async function POST(req: NextRequest) {
 		} catch (err: unknown) {
 			if (err instanceof Error) {
 				console.log(err.message);
-				return NextResponse.json({ message: err.message }, { status: 500 });
+				return NextResponse.json({ err: err.message }, { status: 500 });
 			} else {
 				console.log(err);
-				return NextResponse.json({ message: "Unknown error" }, { status: 500 });
+				return NextResponse.json({ err: "Unknown error" }, { status: 500 });
 			}
 		}
 	} else if (type === "other") {

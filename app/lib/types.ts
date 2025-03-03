@@ -1,3 +1,5 @@
+import { Interface } from "readline";
+
 export interface ModernFilePickerProps {
   onChange?: (file: File | null) => void;
   type: 'image' | 'csv';
@@ -10,7 +12,7 @@ export interface MusicEvent {
 	date: string|Date;
 	venue: string;
 	time: string;
-	link: string;
+	eventType?: string;
 }
 
 export interface OtherEvent {
@@ -22,6 +24,7 @@ export interface OtherEvent {
 	link: string;
 	venue: string;
 	category: string;
+	eventType?: string;
 }
 
 export interface Filter {
