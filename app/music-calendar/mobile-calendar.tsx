@@ -3,16 +3,44 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import * as types from '@/app/lib/types';
+import axios from 'axios';
 
 export default function MobileCalendar() {
 	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 	const [weekDates, setWeekDates] = useState<Date[]>([]);
 	const [showAllEvents, setShowAllEvents] = useState<boolean>(false);
-	const [filteredEvents] = useState<types.MusicEvent[]>([]);
-	const [displayedEvents] = useState<types.MusicEvent[]>([]);
+	const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+	const [displayedEvents, setDisplayedEvents] = useState<types.MusicEvent[]>([]);
 
 	useEffect(() => {
 		const dates = getWeekDates(selectedDate);
+		axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
+			.then((data) => {
+				setDisplayedEvents(data.data.events.filter((event: any) => {
+					let [month, day, year] = event.date.split('/');
+					month = parseInt(month) - 1;
+					day = parseInt(day);
+					year = parseInt(year);
+					const now = selectedDate;
+					const nowMonth = now.getMonth();
+					const nowDay = now.getDate();
+					const nowYear = now.getFullYear()
+					console.log('now...')
+					console.log(nowMonth, nowDay, nowYear);
+					console.log('event...')
+					console.log(month, day, year);
+
+					return month === nowMonth && year === nowYear && day === nowDay;
+				}));
+				setFilteredEvents(displayedEvents);
+				const d = new Date();
+				console.log(d.getMonth());
+				console.log(d.getFullYear());
+				console.log(d.getDate());
+				console.log('displayedEvents')
+				console.log(displayedEvents);
+			})
+			.catch((err) => console.log(err));
 		setWeekDates(dates);
 		setShowAllEvents(false);
 	}, [selectedDate]);
