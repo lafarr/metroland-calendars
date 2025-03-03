@@ -205,7 +205,7 @@ export default function DesktopCalendar() {
 					dayOfMonth = dayOfMonth.substring(1);
 				}
 				const year = date.getFullYear().toString();
-				router.push(`/events/${month}-${dayOfMonth}-${year}`);
+				router.push(`/events/${month}-${dayOfMonth}-${year}?eventType=music`);
 			}}
 		>
 			{label}
