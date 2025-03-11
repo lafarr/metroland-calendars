@@ -1,12 +1,12 @@
 {
-  "/api/events/route": "app/api/events/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/api/csv/route": "app/api/csv/route.js",
   "/api/other-events/route": "app/api/other-events/route.js",
+  "/api/events/route": "app/api/events/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/_not-found/page": "app/_not-found/page.js",
   "/admin/events/page": "app/admin/events/page.js",
   "/events/[slug]/page": "app/events/[slug]/page.js",
+  "/other-calendar/page": "app/other-calendar/page.js",
   "/music-calendar/page": "app/music-calendar/page.js",
-  "/page": "app/page.js",
-  "/other-calendar/page": "app/other-calendar/page.js"
+  "/page": "app/page.js"
 }
