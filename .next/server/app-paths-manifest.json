@@ -6,7 +6,7 @@
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/admin/events/page": "app/admin/events/page.js",
   "/events/[slug]/page": "app/events/[slug]/page.js",
-  "/other-calendar/page": "app/other-calendar/page.js",
   "/music-calendar/page": "app/music-calendar/page.js",
+  "/other-calendar/page": "app/other-calendar/page.js",
   "/page": "app/page.js"
 }
