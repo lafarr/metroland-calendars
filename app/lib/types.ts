@@ -1,25 +1,24 @@
-import { Interface } from "readline";
-
 export interface ModernFilePickerProps {
-  onChange?: (file: File | null) => void;
-  type: 'image' | 'csv';
-  text: string;
+	onChange?: (file: File | null) => void;
+	type: 'image' | 'csv';
+	text: string;
 }
 
 export interface MusicEvent {
 	_id: string;
 	artist: string;
-	date: string|Date;
+	date: string | Date;
 	venue: string;
 	time: string;
+	link: string;
 	eventType?: string;
 }
 
 export interface OtherEvent {
 	_id: string;
 	title: string;
-	start: string|Date;
-	end: string|Date;
+	start: string | Date;
+	end: string | Date;
 	time: string;
 	link: string;
 	venue: string;
@@ -35,11 +34,11 @@ export interface Filter {
 }
 
 export interface CustomToolbarProps {
-    filterValue: string;
-    onFilterChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    setShowingMonthly: (value: boolean) => void;
-    setShowingWeekly: (value: boolean) => void;
-    setView: (view: string) => void;
-    view: string;
-    inputRef: React.RefObject<HTMLInputElement | null>;
+	filterValue: string;
+	onFilterChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	setShowingMonthly: (value: boolean) => void;
+	setShowingWeekly: (value: boolean) => void;
+	setView: (view: string) => void;
+	view: string;
+	inputRef: React.RefObject<HTMLInputElement | null>;
 }
