@@ -29,50 +29,52 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	const [weekDates, setWeekDates] = useState<Date[]>([]);
 	const [showAllEvents, setShowAllEvents] = useState<boolean>(false);
 	const [filteredEvents, setFilteredEvents] = useState<types.OtherEvent[]>([]);
+	const [events, setEvents] = useState<(types.OtherEvent)[]>([]);
 	const [displayedEvents, setDisplayedEvents] = useState<types.OtherEvent[]>(
 		[],
 	);
 
 	useEffect(() => {
-		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`).then(
-			(response) => {
-				if (!response.ok)
-					return response
-						.json()
-						.then(({ events }: { events: types.OtherEvent[] }) => {
-							const tmp = [];
-							for (const e of events) {
-								const tmpE = e;
-								tmpE.title = `${e.title} @ ${e.venue}`;
-								if (
-									typeof tmpE.start === "string" &&
-									typeof tmpE.end === "string"
-								) {
-									const [startMonth, startDay, startYear] =
-										tmpE.start.split("/");
-									const [endMonth, endDay, endYear] = tmpE.end.split("/");
-									tmpE.start = new Date(
-										parseInt(startYear),
-										parseInt(startMonth),
-										parseInt(startDay),
-									);
-									tmpE.end = new Date(
-										parseInt(endYear),
-										parseInt(endMonth),
-										parseInt(endDay),
-									);
-								}
-								tmp.push(tmpE);
-							}
-							const fEvents = tmp.filter(
-								(event: types.OtherEvent) =>
-									event.start <= selectedDate && event.end >= selectedDate,
-							);
-							setFilteredEvents(fEvents);
-							setDisplayedEvents(showAllEvents ? fEvents : fEvents.slice(0, 4));
-						});
-			},
+		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
+			.then((response: Response) => {
+				if (response.ok) {
+					response.json()
+						.then((json: any) => setEvents(json.events));
+				}
+			});
+	}, []);
+
+	useEffect(() => {
+		const tmp = [];
+		for (const e of events) {
+			const tmpE = e;
+			tmpE.title = `${e.title} @ ${e.venue}`;
+			if (
+				typeof tmpE.start === "string" &&
+				typeof tmpE.end === "string"
+			) {
+				const [startMonth, startDay, startYear] =
+					tmpE.start.split("/");
+				const [endMonth, endDay, endYear] = tmpE.end.split("/");
+				tmpE.start = new Date(
+					parseInt(startYear),
+					parseInt(startMonth),
+					parseInt(startDay),
+				);
+				tmpE.end = new Date(
+					parseInt(endYear),
+					parseInt(endMonth),
+					parseInt(endDay),
+				);
+			}
+			tmp.push(tmpE);
+		}
+		const fEvents = tmp.filter(
+			(event: types.OtherEvent) =>
+				event.start <= selectedDate && event.end >= selectedDate,
 		);
+		setFilteredEvents(fEvents);
+		setDisplayedEvents(showAllEvents ? fEvents : fEvents.slice(0, 4));
 	}, [selectedDate, showAllEvents]);
 
 	useEffect(() => {
@@ -173,6 +175,7 @@ function DesktopCalendar({
 	const localizer = momentLocalizer(moment);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [categoryFilters, setCategoryFilters] = useState<Categories[]>([]);
+	const [events, setEvents] = useState<types.OtherEvent[]>([]);
 
 	const CustomEvent = ({ event }: { event: types.OtherEvent }) => (
 		<div style={{ width: "100%", color: "black" }} className="custom-event">
@@ -323,61 +326,67 @@ function DesktopCalendar({
 	});
 
 	useEffect(() => {
+		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
+			.then(async (response: Response) => {
+				const body = await response.json();
+				setEvents(body.events);
+			})
+			.catch((err) => console.log(err));
+
+	}, [])
+
+	useEffect(() => {
 		setReady(true);
-		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`).then(
-			async (response: Response) => {
-				const { events } = await response.json();
-				const realEvents = [];
-				for (const e of events) {
-					const tmpE = e;
-					tmpE.title = `${e.title} @ ${e.venue}`;
-					const [startMonth, startDay, startYear] = tmpE.start.split("/");
-					const [endMonth, endDay, endYear] = tmpE.end.split("/");
-					tmpE.start = new Date(
-						parseInt(startYear),
-						parseInt(startMonth) - 1,
-						parseInt(startDay),
-					);
-					tmpE.end = new Date(
-						parseInt(endYear),
-						parseInt(endMonth) - 1,
-						parseInt(endDay),
-					);
-					realEvents.push(tmpE);
+		const realEvents = [];
+		for (const e of events) {
+			const tmpE = e;
+			tmpE.title = `${e.title} @ ${e.venue}`;
+			const [startMonth, startDay, startYear] = tmpE.start.split("/");
+			const [endMonth, endDay, endYear] = tmpE.end.split("/");
+			tmpE.start = new Date(
+				parseInt(startYear),
+				parseInt(startMonth) - 1,
+				parseInt(startDay),
+			);
+			tmpE.end = new Date(
+				parseInt(endYear),
+				parseInt(endMonth) - 1,
+				parseInt(endDay),
+			);
+			realEvents.push(tmpE);
+		}
+		setRealEvents(
+			realEvents.filter((e: types.OtherEvent) => {
+				const categoryFilterStrings = [];
+
+				if (categoryFilters.includes(Categories.visualArts)) {
+					categoryFilterStrings.push("Visual Arts");
 				}
-				setRealEvents(
-					realEvents.filter((e: types.OtherEvent) => {
-						const categoryFilterStrings = [];
 
-						if (categoryFilters.includes(Categories.visualArts)) {
-							categoryFilterStrings.push("Visual Arts");
-						}
+				if (categoryFilters.includes(Categories.theater)) {
+					categoryFilterStrings.push("Theater");
+				}
 
-						if (categoryFilters.includes(Categories.theater)) {
-							categoryFilterStrings.push("Theater");
-						}
+				if (categoryFilters.includes(Categories.poetry)) {
+					categoryFilterStrings.push("Poetry");
+				}
 
-						if (categoryFilters.includes(Categories.poetry)) {
-							categoryFilterStrings.push("Poetry");
-						}
+				if (categoryFilters.includes(Categories.film)) {
+					categoryFilterStrings.push("Film");
+				}
 
-						if (categoryFilters.includes(Categories.film)) {
-							categoryFilterStrings.push("Film");
-						}
-
-						if (categoryFilters.includes(Categories.comedy)) {
-							categoryFilterStrings.push("Comedy");
-						}
-						if (categoryFilterStrings.length > 0)
-							return (
-								categoryFilterStrings.includes(e.category) &&
-								e.title.toLowerCase().includes(searchQuery)
-							);
-						else return e.title.toLowerCase().includes(searchQuery);
-					}),
-				);
-			},
-		);
+				if (categoryFilters.includes(Categories.comedy)) {
+					categoryFilterStrings.push("Comedy");
+				}
+				if (categoryFilterStrings.length > 0)
+					return (
+						categoryFilterStrings.includes(e.category) &&
+						e.title.toLowerCase().includes(searchQuery)
+					);
+				else return e.title.toLowerCase().includes(searchQuery);
+			}
+			)
+		)
 	}, [searchQuery, categoryFilters]);
 
 	const handlePrevMonth = () => {
