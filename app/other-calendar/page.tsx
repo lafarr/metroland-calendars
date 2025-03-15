@@ -47,7 +47,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	useEffect(() => {
 		const tmp = [];
 		for (const e of events) {
-			const tmpE = e;
+			const tmpE = { ...e };
 			tmpE.title = `${e.title} @ ${e.venue}`;
 			if (
 				typeof tmpE.start === "string" &&
@@ -169,7 +169,6 @@ function DesktopCalendar({
 }: Readonly<{ customClasses: string }>) {
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [realEvents, setRealEvents] = useState<types.OtherEvent[]>([]);
-	const [, setReady] = useState<boolean>(false);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const router = useRouter();
 	const localizer = momentLocalizer(moment);
@@ -336,10 +335,11 @@ function DesktopCalendar({
 	}, [])
 
 	useEffect(() => {
-		setReady(true);
-		const realEvents = [];
-		for (const e of events) {
-			const tmpE = e;
+		console.log(categoryFilters);
+		const tmpRealEvents: types.OtherEvent[] = [];
+		const tmpEvents = [...events];
+		for (const e of tmpEvents) {
+			const tmpE = { ...e };
 			tmpE.title = `${e.title} @ ${e.venue}`;
 			const [startMonth, startDay, startYear] = tmpE.start.toString().split("/");
 			const [endMonth, endDay, endYear] = tmpE.end.toString().split("/");
@@ -353,41 +353,45 @@ function DesktopCalendar({
 				parseInt(endMonth) - 1,
 				parseInt(endDay),
 			);
-			realEvents.push(tmpE);
+			tmpRealEvents.push(tmpE);
 		}
+		const categoryFilterStrings: any = [];
 		setRealEvents(
-			realEvents.filter((e: types.OtherEvent) => {
-				const categoryFilterStrings = [];
-
+			tmpRealEvents.filter((e: types.OtherEvent) => {
 				if (categoryFilters.includes(Categories.visualArts)) {
-					categoryFilterStrings.push("Visual Arts");
+					categoryFilterStrings.push("visual arts");
 				}
 
 				if (categoryFilters.includes(Categories.theater)) {
-					categoryFilterStrings.push("Theater");
+					categoryFilterStrings.push("theater");
 				}
 
 				if (categoryFilters.includes(Categories.poetry)) {
-					categoryFilterStrings.push("Poetry");
+					categoryFilterStrings.push("poetry");
 				}
 
 				if (categoryFilters.includes(Categories.film)) {
-					categoryFilterStrings.push("Film");
+					categoryFilterStrings.push("film");
 				}
 
 				if (categoryFilters.includes(Categories.comedy)) {
-					categoryFilterStrings.push("Comedy");
+					categoryFilterStrings.push("comedy");
 				}
 				if (categoryFilterStrings.length > 0)
 					return (
-						categoryFilterStrings.includes(e.category) &&
+						categoryFilterStrings.includes(e.category.toLowerCase()) &&
 						e.title.toLowerCase().includes(searchQuery)
 					);
 				else return e.title.toLowerCase().includes(searchQuery);
 			}
 			)
 		)
-	}, [searchQuery, categoryFilters]);
+	}, [searchQuery, categoryFilters, events]);
+
+	useEffect(() => {
+		console.log('real events');
+		console.log(realEvents);
+	}, [realEvents])
 
 	const handlePrevMonth = () => {
 		setCurrentDate((prevDate) => moment(prevDate).subtract(1, "month").toDate());
@@ -450,10 +454,10 @@ export default function OtherCalendar() {
 	return (
 		<div className="min-h-screen">
 			{ready && (
-				<>
+				<div className="other-calendar">
 					<DesktopCalendar customClasses={"hidden md:block"} />
 					<MobileCalendar customClasses={"md:hidden"} />
-				</>
+				</div>
 			)}
 		</div>
 	);
