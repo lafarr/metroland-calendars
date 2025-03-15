@@ -341,8 +341,8 @@ function DesktopCalendar({
 		for (const e of events) {
 			const tmpE = e;
 			tmpE.title = `${e.title} @ ${e.venue}`;
-			const [startMonth, startDay, startYear] = tmpE.start.split("/");
-			const [endMonth, endDay, endYear] = tmpE.end.split("/");
+			const [startMonth, startDay, startYear] = tmpE.start.toString().split("/");
+			const [endMonth, endDay, endYear] = tmpE.end.toString().split("/");
 			tmpE.start = new Date(
 				parseInt(startYear),
 				parseInt(startMonth) - 1,
