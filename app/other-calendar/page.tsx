@@ -15,6 +15,7 @@ import "./styles.css";
 import { useRouter } from "next/navigation";
 import Dropdown from "../lib/Dropdown";
 import * as types from "@/app/lib/types";
+import { useSearchParams } from "next/navigation";
 
 enum Categories {
 	visualArts,
@@ -175,6 +176,8 @@ function DesktopCalendar({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [categoryFilters, setCategoryFilters] = useState<Categories[]>([]);
 	const [events, setEvents] = useState<types.OtherEvent[]>([]);
+	const searchParams = useSearchParams();
+	const isEmbed = !!searchParams.get('embed')
 
 	const CustomEvent = ({ event }: { event: types.OtherEvent }) => (
 		<div style={{ width: "100%", color: "black" }} className="custom-event">
@@ -191,134 +194,139 @@ function DesktopCalendar({
 		</div>
 	);
 
-	const CustomMonthDateHeader = ({ date }: { date: Date }) => (
-		<div
-			style={{
-				fontSize: "16px",
-				fontWeight: "bold",
-				cursor: "pointer",
-				textAlign: "right",
-			}}
-			className="custom-date-header"
-		>
-			<span
-				className="rbc-button-link"
-				onClick={() => {
-					date = new Date(date);
-					let month = (date.getMonth() + 1).toString();
-					if (month.startsWith("0") && month.length === 2) {
-						month = month.substring(1);
-					}
-					let dayOfMonth = date.getDate().toString();
-					if (dayOfMonth.startsWith("0") && dayOfMonth.length === 2) {
-						dayOfMonth = dayOfMonth.substring(1);
-					}
-					const year = date.getFullYear().toString();
-					router.push(`/events/${month}-${dayOfMonth}-${year}?eventType=other`);
+	const CustomMonthDateHeader = ({ date }: { date: Date }) => {
+		return (
+			<div
+				style={{
+					fontSize: "16px",
+					fontWeight: "bold",
+					cursor: "pointer",
+					textAlign: "right",
 				}}
+				className="custom-date-header"
 			>
-				{date.getDate()}
-			</span>
-		</div>
-	);
-
-	const CustomToolbar = () => (
-		<div className="custom-toolbar" key={"search"}>
-			<Dropdown current="Other" />
-			<button
-				onClick={() => {
-					if (!categoryFilters.includes(Categories.visualArts))
-						setCategoryFilters((prev: Categories[]) => [
-							...prev,
-							Categories.visualArts,
-						]);
-					else
-						setCategoryFilters((prev: Categories[]) =>
-							prev.filter((c) => c !== Categories.visualArts),
-						);
-				}}
-				className={`${categoryFilters.includes(Categories.visualArts) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
-			>
-				visual arts
-			</button>
-			<button
-				onClick={() => {
-					if (!categoryFilters.includes(Categories.theater))
-						setCategoryFilters((prev: Categories[]) => [
-							...prev,
-							Categories.theater,
-						]);
-					else
-						setCategoryFilters((prev: Categories[]) =>
-							prev.filter((c) => c !== Categories.theater),
-						);
-				}}
-				className={`${categoryFilters.includes(Categories.theater) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
-			>
-				theater
-			</button>
-			<button
-				onClick={() => {
-					if (!categoryFilters.includes(Categories.film))
-						setCategoryFilters((prev: Categories[]) => [
-							...prev,
-							Categories.film,
-						]);
-					else
-						setCategoryFilters((prev: Categories[]) =>
-							prev.filter((c) => c !== Categories.film),
-						);
-				}}
-				className={`${categoryFilters.includes(Categories.film) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
-			>
-				film
-			</button>
-			<button
-				onClick={() => {
-					if (!categoryFilters.includes(Categories.poetry))
-						setCategoryFilters((prev: Categories[]) => [
-							...prev,
-							Categories.poetry,
-						]);
-					else
-						setCategoryFilters((prev: Categories[]) =>
-							prev.filter((c) => c !== Categories.poetry),
-						);
-				}}
-				className={`${categoryFilters.includes(Categories.poetry) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
-			>
-				poetry
-			</button>
-			<button
-				onClick={() => {
-					if (!categoryFilters.includes(Categories.comedy))
-						setCategoryFilters((prev: Categories[]) => [
-							...prev,
-							Categories.comedy,
-						]);
-					else
-						setCategoryFilters((prev: Categories[]) =>
-							prev.filter((c) => c !== Categories.comedy),
-						);
-				}}
-				className={`${categoryFilters.includes(Categories.comedy) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
-			>
-				comedy
-			</button>
-			<div className="input-container">
-				<Search className="absolute text-gray-200 right-[90%]" />
-				<input
-					type="text"
-					ref={inputRef}
-					className="search-input focus:outline-none"
-					onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-						setSearchQuery(e.target.value)
-					}
-					value={searchQuery}
-				/>
+				<span
+					className="rbc-button-link"
+					onClick={() => {
+						date = new Date(date);
+						let month = (date.getMonth() + 1).toString();
+						if (month.startsWith("0") && month.length === 2) {
+							month = month.substring(1);
+						}
+						let dayOfMonth = date.getDate().toString();
+						if (dayOfMonth.startsWith("0") && dayOfMonth.length === 2) {
+							dayOfMonth = dayOfMonth.substring(1);
+						}
+						const year = date.getFullYear().toString();
+						router.push(`/events/${month}-${dayOfMonth}-${year}?eventType=other`);
+					}}
+				>
+					{date.getDate()}
+				</span>
 			</div>
-		</div>
-	);
+		);
+	}
+
+	const CustomToolbar = () => {
+		if (isEmbed) return <></>
+		else return (
+			<div className="custom-toolbar" key={"search"}>
+				<Dropdown current="Other" />
+				<button
+					onClick={() => {
+						if (!categoryFilters.includes(Categories.visualArts))
+							setCategoryFilters((prev: Categories[]) => [
+								...prev,
+								Categories.visualArts,
+							]);
+						else
+							setCategoryFilters((prev: Categories[]) =>
+								prev.filter((c) => c !== Categories.visualArts),
+							);
+					}}
+					className={`${categoryFilters.includes(Categories.visualArts) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
+				>
+					visual arts
+				</button>
+				<button
+					onClick={() => {
+						if (!categoryFilters.includes(Categories.theater))
+							setCategoryFilters((prev: Categories[]) => [
+								...prev,
+								Categories.theater,
+							]);
+						else
+							setCategoryFilters((prev: Categories[]) =>
+								prev.filter((c) => c !== Categories.theater),
+							);
+					}}
+					className={`${categoryFilters.includes(Categories.theater) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
+				>
+					theater
+				</button>
+				<button
+					onClick={() => {
+						if (!categoryFilters.includes(Categories.film))
+							setCategoryFilters((prev: Categories[]) => [
+								...prev,
+								Categories.film,
+							]);
+						else
+							setCategoryFilters((prev: Categories[]) =>
+								prev.filter((c) => c !== Categories.film),
+							);
+					}}
+					className={`${categoryFilters.includes(Categories.film) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
+				>
+					film
+				</button>
+				<button
+					onClick={() => {
+						if (!categoryFilters.includes(Categories.poetry))
+							setCategoryFilters((prev: Categories[]) => [
+								...prev,
+								Categories.poetry,
+							]);
+						else
+							setCategoryFilters((prev: Categories[]) =>
+								prev.filter((c) => c !== Categories.poetry),
+							);
+					}}
+					className={`${categoryFilters.includes(Categories.poetry) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
+				>
+					poetry
+				</button>
+				<button
+					onClick={() => {
+						if (!categoryFilters.includes(Categories.comedy))
+							setCategoryFilters((prev: Categories[]) => [
+								...prev,
+								Categories.comedy,
+							]);
+						else
+							setCategoryFilters((prev: Categories[]) =>
+								prev.filter((c) => c !== Categories.comedy),
+							);
+					}}
+					className={`${categoryFilters.includes(Categories.comedy) ? "bg-[#faff00] text-black" : "text-gray-300"} rounded p-2 m-2 border border-[#faff00]`}
+				>
+					comedy
+				</button>
+				<div className="input-container">
+					<Search className="absolute text-gray-200 right-[90%]" />
+					<input
+						type="text"
+						ref={inputRef}
+						className="search-input focus:outline-none"
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							setSearchQuery(e.target.value)
+						}
+						value={searchQuery}
+					/>
+				</div>
+			</div>
+		);
+	}
 
 	useEffect(() => {
 		inputRef.current?.focus();
