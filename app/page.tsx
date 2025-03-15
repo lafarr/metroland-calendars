@@ -1,6 +1,6 @@
-import React from 'react'
+import { redirect } from 'next/navigation';
 
 export default function Home() {
 	// /music-calendar should always be the default
-	return <h1>hello</h1>
+	redirect('/music-calendar');
 }

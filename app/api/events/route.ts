@@ -43,7 +43,7 @@ export async function GET() {
 				};
 			});
 
-		return NextResponse.json({ events: cleanedEvents });
+		return NextResponse.json({ events: cleanedEvents ?? [] });
 	} catch (err) {
 		console.log(err);
 		return NextResponse.json({ error: true });
