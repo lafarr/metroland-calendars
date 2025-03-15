@@ -1,331 +1,337 @@
 .music-calendar-container .month-container {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 100%;
+}
+
+.loader-container {
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .music-calendar-container .arrow-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    color: #faff00;
-    background-color: #333;
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+	color: #faff00;
+	background-color: #333;
 }
 
 .music-calendar-container .arrow-button svg {
-    width: 28px;
-    height: 28px;
+	width: 28px;
+	height: 28px;
 }
 
 .music-calendar-container .arrow-button svg {
-    width: 24px;
-    height: 24px;
+	width: 24px;
+	height: 24px;
 }
 
 .music-calendar-container .calendar-container {
-    height: 100vh;
-    background-color: #2a2727;
-    padding: 20px;
-    display: flex;
-    overflow-x: hidden;
-    box-sizing: border-box;
+	height: 100vh;
+	background-color: #2a2727;
+	padding: 20px;
+	display: flex;
+	overflow-x: hidden;
+	box-sizing: border-box;
 }
 
 .music-calendar-container .left-column {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    border-radius: 15px;
-    height: 40%;
-    /* Adjust as needed */
-    width: 60px;
-    /* Set a fixed width */
-    margin: auto;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+	border-radius: 15px;
+	height: 40%;
+	/* Adjust as needed */
+	width: 60px;
+	/* Set a fixed width */
+	margin: auto;
 }
 
 .music-calendar-container .top-left-month {
-    color: #faff00;
-    font-size: 36px;
-    font-weight: bold;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    height: 200px;
-    letter-spacing: 0px;
-    margin: 15px 0;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+	color: #faff00;
+	font-size: 36px;
+	font-weight: bold;
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
+	height: 200px;
+	letter-spacing: 0px;
+	margin: 15px 0;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .music-calendar-container .main-calendar {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
-    background-color: #2a2727;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	overflow-x: hidden;
+	overflow-y: auto;
+	background-color: #2a2727;
 }
 
 .music-calendar-container .custom-toolbar {
-    display: flex;
-    justify-content: right;
-    align-items: center;
-    padding: 10px 0;
+	display: flex;
+	justify-content: right;
+	align-items: center;
+	padding: 10px 0;
 }
 
 .music-calendar-container .view-button {
-    color: #888;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin: 0 5px;
+	color: #888;
+	background: none;
+	border: none;
+	cursor: pointer;
+	margin: 0 5px;
 }
 
 .music-calendar-container .view-button.active {
-    color: #faff00;
-    font-weight: bolder;
+	color: #faff00;
+	font-weight: bolder;
 }
 
 .music-calendar-container .custom-day-bg {
-    background-color: #2a2727;
-    color: #faff00;
-    border: 1px solid #faff00;
+	background-color: #2a2727;
+	color: #faff00;
+	border: 1px solid #faff00;
 }
 
 .music-calendar-container .custom-date-header {
-    text-align: left;
-    padding: 5px;
-    color: #faff00;
-    font-size: 14px;
+	text-align: left;
+	padding: 5px;
+	color: #faff00;
+	font-size: 14px;
 }
 
 .music-calendar-container .custom-month-header {
-    color: #faff00;
-    text-transform: uppercase;
-    font-weight: bold;
-    padding: 5px;
+	color: #faff00;
+	text-transform: uppercase;
+	font-weight: bold;
+	padding: 5px;
 }
 
 .music-calendar-container .custom-event {
-    font-size: 12px;
-    color: #fff;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	font-size: 12px;
+	color: #fff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .music-calendar-container .rbc-event {
-    border: none !important;
-    background-color: transparent;
-    margin: 0 auto !important;
-    width: 90%;
+	border: none !important;
+	background-color: transparent;
+	margin: 0 auto !important;
+	width: 90%;
 }
 
 .music-calendar-container .rbc-event-content {
-    color: black;
-    text-align: center;
+	color: black;
+	text-align: center;
 }
 
 .music-calendar-container .rbc-button-link {
-    margin: auto;
+	margin: auto;
 }
 
 .music-calendar-container .rbc-button-link:hover {
-    opacity: .5;
+	opacity: .5;
 }
 
 .music-calendar-container .rbc-day-bg {
-    display: flex !important;
-    flex-direction: column !important;
+	display: flex !important;
+	flex-direction: column !important;
 }
 
 .music-calendar-container .rbc-events-container {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-    overflow: hidden !important;
+	flex: 1 !important;
+	display: flex !important;
+	flex-direction: column !important;
+	justify-content: flex-start !important;
+	overflow: hidden !important;
 }
 
 .music-calendar-container .rbc-row-content {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
+	flex: 1 !important;
+	display: flex !important;
+	flex-direction: column !important;
 }
 
 .music-calendar-container .rbc-time-content {
-    display: none;
+	display: none;
 }
 
 .music-calendar-container .rbc-time-header {
-    height: auto;
-    width: 100%;
-    overflow-y: auto;
+	height: auto;
+	width: 100%;
+	overflow-y: auto;
 }
 
-.music-calendar-container .rbc-calendar > * {
-    box-sizing: border-box;
+.music-calendar-container .rbc-calendar>* {
+	box-sizing: border-box;
 }
 
 .music-calendar-container .rbc-time-header-content {
-    width: auto;
-    min-height: 50vh;
+	width: auto;
+	min-height: 50vh;
 }
 
 .music-calendar-container .rbc-time-view {
-    height: auto;
-    border: none;
+	height: auto;
+	border: none;
 }
 
 .music-calendar-container .custom-event:hover {
-    opacity: .5;
+	opacity: .5;
 }
 
 .music-calendar-container .rbc-label {
-    display: none;
+	display: none;
 }
 
 .music-calendar-container .weekly {
-    margin: 0;
+	margin: 0;
 }
 
 .music-calendar-container .weekly-artist {
-    color: #faff00;
+	color: #faff00;
 }
 
 .music-calendar-container .rbc-row-content-scroll-container {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
+	flex: 1 !important;
+	display: flex !important;
+	flex-direction: column !important;
 }
 
 .music-calendar-container .rbc-row-segment {
-    flex: 0 0 auto !important;
+	flex: 0 0 auto !important;
 }
 
 .music-calendar-container .input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    margin-right: 10vw;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: right;
+	margin-right: 10vw;
 }
 
 .music-calendar-container .search-input {
-    border: 1px solid lightgray;
-    border-radius: 20px;
-    font-size: 16px;
-    padding: 5px 55px;
-    background-color: inherit;
-    color: lightgray;
+	border: 1px solid lightgray;
+	border-radius: 20px;
+	font-size: 16px;
+	padding: 5px 55px;
+	background-color: inherit;
+	color: lightgray;
 	outline: none;
 }
 
 .music-calendar-container .search-icon {
-    position: absolute;
-    left: 10px;
-    color: lightgray;
-    pointer-events: none;
-    /* Prevent the icon from blocking input interaction */
+	position: absolute;
+	left: 10px;
+	color: lightgray;
+	pointer-events: none;
+	/* Prevent the icon from blocking input interaction */
 }
 
 .music-calendar-container .rbc-header {
-    border: 1px solid #faff00;
+	border: 1px solid #faff00;
 }
 
 .music-calendar-container .rbc-show-more {
-    font-size: 12px !important;
-    background-color: transparent !important;
-    color: lightgray !important;
+	font-size: 12px !important;
+	background-color: transparent !important;
+	color: lightgray !important;
 }
 
 .music-calendar-container .rbc-selected {
-    background-color: transparent !important;
+	background-color: transparent !important;
 }
 
 .music-calendar-container .weekly {
-    overflow: hidden;
-    text-overflow: ellipsis;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .music-calendar-container .rbc-show-more-hover {
-    color: lightgray;
+	color: lightgray;
 }
 
 .music-calendar-container .rbc-month-view,
 .music-calendar-container .rbc-time-view {
-    background-color: #2a2727;
+	background-color: #2a2727;
 }
 
 .music-calendar-container .rbc-row-segment {
-    width: 90%;
+	width: 90%;
 }
 
 @media (max-width: 768px) {
-    .music-calendar-container .rbc-button-link {
-        display: none;
-    }
+	.music-calendar-container .rbc-button-link {
+		display: none;
+	}
 
-    .music-calendar-container .calendar-container {
-        flex-direction: column;
-        padding: 10px;
-    }
+	.music-calendar-container .calendar-container {
+		flex-direction: column;
+		padding: 10px;
+	}
 
-    .music-calendar-container .left-column {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
+	.music-calendar-container .left-column {
+		width: 100%;
+		margin-right: 0;
+		margin-bottom: 10px;
+	}
 
-    .music-calendar-container .top-left-month {
-        writing-mode: horizontal-tb;
-        transform: none;
-        height: auto;
-        text-align: center;
-    }
+	.music-calendar-container .top-left-month {
+		writing-mode: horizontal-tb;
+		transform: none;
+		height: auto;
+		text-align: center;
+	}
 
-    .music-calendar-container .custom-toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
+	.music-calendar-container .custom-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
 
-    .music-calendar-container .custom-toolbar>div {
-        margin-bottom: 10px;
-    }
+	.music-calendar-container .custom-toolbar>div {
+		margin-bottom: 10px;
+	}
 
-    .music-calendar-container .rbc-calendar {
-        font-size: 12px;
-    }
+	.music-calendar-container .rbc-calendar {
+		font-size: 12px;
+	}
 
-    .music-calendar-container .rbc-btn-group {
-        display: none;
-    }
+	.music-calendar-container .rbc-btn-group {
+		display: none;
+	}
 
-    .music-calendar-container .input-container {
-        display: none;
-    }
+	.music-calendar-container .input-container {
+		display: none;
+	}
 
-    .music-calendar-container .calendar-type {
-        margin: auto;
-    }
+	.music-calendar-container .calendar-type {
+		margin: auto;
+	}
 
-    .music-calendar-container .month-name {
-        text-align: center;
-    }
+	.music-calendar-container .month-name {
+		text-align: center;
+	}
 
-    .music-calendar-container .left-column {
-        height: 30%;
-    }
+	.music-calendar-container .left-column {
+		height: 30%;
+	}
 }
-
-

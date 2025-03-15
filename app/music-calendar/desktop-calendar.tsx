@@ -2,7 +2,7 @@
 
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
-import { ChevronUp, ChevronDown, Search } from "lucide-react";
+import { ChevronUp, ChevronDown, Search, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -10,6 +10,7 @@ import Dropdown from "../lib/Dropdown";
 import * as types from "@/app/lib/types";
 
 export default function DesktopCalendar() {
+	const [ready, setReady] = useState(false);
 	const [showingMonthly, setShowingMonthly] = useState<boolean>(true);
 	const [showingWeekly, setShowingWeekly] = useState<boolean>(false);
 	const [view, setView] = useState<string>("month");
@@ -99,6 +100,7 @@ export default function DesktopCalendar() {
 				setFilteredEvents(tmpEvents);
 			},
 		);
+		setReady(true);
 	}, []);
 
 	const CustomToolbar = () => {
@@ -234,66 +236,76 @@ export default function DesktopCalendar() {
 		</div>
 	);
 
-	return (
-		<div className="calendar-container">
-			<div className="left-column">
-				<button
-					className="arrow-button"
-					aria-label="Previous month"
-					onClick={showingMonthly ? handleNextMonth : handleNextWeek}
-				>
-					<ChevronUp />
-				</button>
-				<div className="month-container">
-					<div className="top-left-month">
-						{moment(currentDate).format("MMMM").toLowerCase()}
+	if (!ready) {
+		return (
+			<div className="loader-container">
+				<Loader2 className="text-white h-8 w-8 animate-spin" />
+			</div>
+		)
+	}
+
+	else {
+		return (
+			<div className="calendar-container">
+				<div className="left-column">
+					<button
+						className="arrow-button"
+						aria-label="Previous month"
+						onClick={showingMonthly ? handleNextMonth : handleNextWeek}
+					>
+						<ChevronUp />
+					</button>
+					<div className="month-container">
+						<div className="top-left-month">
+							{moment(currentDate).format("MMMM").toLowerCase()}
+						</div>
 					</div>
+					<button
+						// onClick={onNextMonth}
+						className="arrow-button"
+						aria-label="Next month"
+						onClick={showingMonthly ? handlePrevMonth : handlePrevWeek}
+					>
+						<ChevronDown />
+					</button>
 				</div>
-				<button
-					// onClick={onNextMonth}
-					className="arrow-button"
-					aria-label="Next month"
-					onClick={showingMonthly ? handlePrevMonth : handlePrevWeek}
-				>
-					<ChevronDown />
-				</button>
+				<div className="main-calendar">
+					<CustomToolbar />
+					<Calendar
+						localizer={localizer}
+						events={filteredEvents}
+						startAccessor="start"
+						endAccessor="end"
+						style={{ flex: 1 }}
+						views={["month", "week"]}
+						view={showingWeekly ? Views.WEEK : Views.MONTH}
+						onView={setView}
+						date={currentDate}
+						onNavigate={handleNavigate}
+						onShowMore={(_: any, blah: any) => {
+							console.log('showing the blah')
+							console.log(blah);
+							router.push(
+								`/events/${blah.getMonth() + 1}-${blah.getDate()}-${blah.getFullYear().toString()}?eventType=music`,
+							);
+						}}
+						components={{
+							header: (props) => <CustomWeeklyHeader {...props} />,
+							toolbar: () => null,
+							timeGutterHeader: () => null,
+							month: {
+								dateHeader: CustomMonthDateHeader,
+								header: CustomMonthHeader,
+							},
+							event: CustomEvent,
+						}}
+						dayPropGetter={customDayPropGetter}
+						formats={{
+							monthHeaderFormat: "MMMM",
+						}}
+					/>
+				</div>
 			</div>
-			<div className="main-calendar">
-				<CustomToolbar />
-				<Calendar
-					localizer={localizer}
-					events={filteredEvents}
-					startAccessor="start"
-					endAccessor="end"
-					style={{ flex: 1 }}
-					views={["month", "week"]}
-					view={showingWeekly ? Views.WEEK : Views.MONTH}
-					onView={setView}
-					date={currentDate}
-					onNavigate={handleNavigate}
-					onShowMore={(_: any, blah: any) => {
-						console.log('showing the blah')
-						console.log(blah);
-						router.push(
-							`/events/${blah.getMonth() + 1}-${blah.getDate()}-${blah.getFullYear().toString()}?eventType=music`,
-						);
-					}}
-					components={{
-						header: (props) => <CustomWeeklyHeader {...props} />,
-						toolbar: () => null,
-						timeGutterHeader: () => null,
-						month: {
-							dateHeader: CustomMonthDateHeader,
-							header: CustomMonthHeader,
-						},
-						event: CustomEvent,
-					}}
-					dayPropGetter={customDayPropGetter}
-					formats={{
-						monthHeaderFormat: "MMMM",
-					}}
-				/>
-			</div>
-		</div>
-	);
+		);
+	}
 }
