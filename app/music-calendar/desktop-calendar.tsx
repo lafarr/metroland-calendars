@@ -3,7 +3,7 @@
 import React, { useCallback, useRef, useEffect, useState } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import { ChevronUp, ChevronDown, Search, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Dropdown from "../lib/Dropdown";
@@ -23,6 +23,8 @@ export default function DesktopCalendar() {
 		(types.MusicEvent & { start: Date; end: Date })[]
 	>([]);
 	const localizer = momentLocalizer(moment);
+	const searchParams = useSearchParams();
+	const isEmbed = !!searchParams.get('embed')
 
 	const handleFilter = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,6 +106,7 @@ export default function DesktopCalendar() {
 	}, []);
 
 	const CustomToolbar = () => {
+		if (isEmbed) return <></>
 		return (
 			<div className="custom-toolbar">
 				<Dropdown current="Music" />
