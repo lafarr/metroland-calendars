@@ -9,15 +9,16 @@ import AdminEventsGrid from './admin-events-grid';
 import { Filter, MusicEvent, OtherEvent } from '@/app/lib/types';
 
 const AdminEvents = () => {
-	const [events, setEvents] = useState<(MusicEvent| OtherEvent)[]>([]);
+	const [events, setEvents] = useState<(MusicEvent | OtherEvent)[]>([]);
 
 	const [filters] = useState<Filter>({ artist: '', date: '', venue: '', town: '' });
-	const [, setFilteredEvents] = useState<(MusicEvent|OtherEvent)[]>(events);
+	const [, setFilteredEvents] = useState<(MusicEvent | OtherEvent)[]>(events);
 	const [csv, setCsv] = useState<string>('');
 	const [selectedCsvType, setSelectedCsvType] = useState<string>('music');
 	const [uploadError, setUploadError] = useState<string | null>(null);
 	const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
 	const [fileUploadIsLoading, setFileUploadIsLoading] = useState<boolean>(false);
+	const [sheetNumber, setSheetNumber] = useState<string>('1');
 
 	function csvToBase64(file: File | null) {
 		if (file) {
@@ -39,7 +40,7 @@ const AdminEvents = () => {
 	useEffect(() => {
 		const musicEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 		const otherEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
-		const tmpNewEvents: (MusicEvent|OtherEvent)[] = []
+		const tmpNewEvents: (MusicEvent | OtherEvent)[] = []
 		Promise.all([musicEventsPromise, otherEventsPromise])
 			.then((resolvedPromises) => {
 				for (const resolvedPromise of resolvedPromises) {
@@ -73,12 +74,13 @@ const AdminEvents = () => {
 		setFileUploadIsLoading(true);
 		axios.post(`${process.env.NEXT_PUBLIC_API_BASE}/api/csv`, {
 			file: csv,
-			type: selectedCsvType
+			type: selectedCsvType,
+			sheetNumber: sheetNumber
 		})
 			.then(() => {
 				const musicEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/events`)
 				const otherEventsPromise = axios.get(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
-				const tmpNewEvents: (MusicEvent|OtherEvent)[] = [];
+				const tmpNewEvents: (MusicEvent | OtherEvent)[] = [];
 				Promise.all([musicEventsPromise, otherEventsPromise])
 					.then((resolvedPromises) => {
 						for (const resolvedPromise of resolvedPromises) {
@@ -128,9 +130,11 @@ const AdminEvents = () => {
 							<button onClick={() => setSelectedCsvType('other')} className={`${selectedCsvType !== 'other' ? 'hover:opacity-75 ' : ''}rounded h-10 w-80 text-black bg-[#faff00]${selectedCsvType === 'other' ? ' opacity-30' : ' opacity-100'}`}>Other events</button>
 						</div>
 						<ModernFilePicker onChange={csvToBase64} text={'Click or drag and drop to upload an Excel file'} type={'csv'} />
+						<label>Sheet #</label>
+						<input className="mb-4" type="number" value={sheetNumber} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSheetNumber(e.target.value)} />
 						<div className='flex justify-center gap-4'>
-						<button onClick={handleCsvSubmit}
-						className={`rounded h-10 w-80 text-white bg-[#4CAF50] ${!csv ? 'opacity-30' : ''}`}>
+							<button onClick={handleCsvSubmit}
+								className={`rounded h-10 w-80 text-white bg-[#4CAF50] ${!csv ? 'opacity-30' : ''}`}>
 								Add Excel Events
 							</button>
 						</div>
