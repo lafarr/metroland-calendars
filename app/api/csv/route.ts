@@ -117,6 +117,7 @@ function getXlsData(base64String: string): {
 	data: string[][];
 } {
 	try {
+		console.log('working on parsing xls...')
 		const base64Data = base64String.replace(/^data:.*?;base64,/, "");
 		const buffer = Buffer.from(base64Data, "base64");
 		const workbook = xlsx.read(buffer, {
@@ -126,25 +127,23 @@ function getXlsData(base64String: string): {
 		});
 
 		const rows: string[][] = [];
+		const sheetName = workbook.SheetNames[0];
 		let columnNames: string[] = [];
-		workbook.SheetNames.forEach((sheetName, idx) => {
-			const worksheet = workbook.Sheets[sheetName];
+		const worksheet = workbook.Sheets[sheetName];
 
-			const data = xlsx.utils.sheet_to_json(worksheet, {
-				header: 1,
-				raw: false,
-				defval: "",
-				blankrows: false,
-				rawNumbers: false,
-			});
+		const data = xlsx.utils.sheet_to_json(worksheet, {
+			header: 1,
+			raw: false,
+			defval: "",
+			blankrows: false,
+			rawNumbers: false,
+		});
 
-			if (idx === 0) {
-				columnNames = data[0] as string[];
-			}
+		columnNames = data[0] as string[];
 
-			const localRows = data.slice(1) as string[][];
-			rows.push(...localRows);
-		})
+		const localRows = data.slice(1) as string[][];
+		rows.push(...localRows);
+		console.log('done parsing xls...')
 
 		return {
 			columnNames: columnNames,
@@ -167,6 +166,7 @@ function fixDate(str: string): string {
 async function handleMusicEvents(
 	base64String: string
 ): Promise<mongoose.Document[]> {
+	console.log('handling music events')
 	const res = getXlsData(base64String);
 	const error: string | undefined = validateMusicEventData(res.data);
 	if (error) {
@@ -186,9 +186,13 @@ async function handleMusicEvents(
 			town: event[4],
 			link: event[5],
 		});
-		await newEvent.save();
 		insertedEvents.push(newEvent);
 	}
+
+	EventModel.insertMany(insertedEvents, {
+		ordered: false
+	})
+	console.log('done handling music events...')
 	return insertedEvents;
 }
 
