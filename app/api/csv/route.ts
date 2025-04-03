@@ -78,6 +78,7 @@ function validateOtherEventData(rows: string[][]): string | undefined {
 				i === 1 &&
 				cleanedValue !== "n/a" &&
 				cleanedValue !== "varies" &&
+				cleanedValue !== "" &&
 				!datePattern.test(cleanedValue)
 			) {
 				return `Invalid end date: ${row[i]}`;
@@ -218,7 +219,7 @@ async function handleOtherEvents(
 			event[1].trim() !== "" && event[1].toLowerCase() !== "varies"
 				? event[1]
 				: startDate;
-		if (endDate.toLowerCase() === "n/a") {
+		if (endDate.toLowerCase() === "n/a" || endDate.toLowerCase() == "") {
 			endDate = "1/1/2074";
 		}
 		const newEvent = new OtherEvent({
