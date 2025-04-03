@@ -215,7 +215,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 			{!loading && <div className="p-4 text-center">
 				{displayedEvents?.map((event: types.OtherEvent) => (
 					<div key={event._id} className="mb-2 p-2">
-						<p className="font-semibold text-[#faff00]">
+						<p className="font-semibold text-[#faff00]" onClick={() => { if (event.link) window.open(event.link, '_blank') }}>
 							{event.title.toLowerCase()}
 						</p>
 						<p className="text-sm text-gray-200">
@@ -252,7 +252,7 @@ function DesktopCalendar({
 
 	const CustomEvent = ({ event }: { event: types.OtherEvent }) => (
 		<div style={{ width: "100%", color: "black" }} className="custom-event">
-			{
+			{event.link &&
 				<a
 					href={event.link}
 					rel="noreferrer"
