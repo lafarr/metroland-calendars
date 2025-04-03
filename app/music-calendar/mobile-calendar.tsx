@@ -90,7 +90,7 @@ export default function MobileCalendar() {
 			<div className="p-4 text-center">
 				{displayedEvents?.map((event: types.MusicEvent) => (
 					<div key={event._id} className="mb-2 p-2">
-						<p className="font-semibold text-[#faff00] cursor-pointer hover:opacity-80" onClick={() => window.open(event.link, '_blank')}>{event.artist.toLowerCase()}</p>
+						<p className="font-semibold text-[#faff00] cursor-pointer hover:opacity-80" onClick={() => { if (event.link) window.open(event.link, '_blank') }}>{event.artist.toLowerCase()}</p>
 						<p className="text-sm text-gray-200" onClick={() => window.open(event.link, '_blank')}>{event.venue.toLowerCase()}</p>
 						<p className="text-sm text-gray-200" onClick={() => window.open(event.link, '_blank')}>{event.time.toLowerCase()}</p>
 					</div>

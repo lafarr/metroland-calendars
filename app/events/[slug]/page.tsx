@@ -57,7 +57,13 @@ const EventList = () => {
 						<div className={styles.eventTitle}>{'artist' in event ? event.artist : event.title}</div>
 						<div className={styles.eventTime}>{event.time}</div>
 						<div className={styles.eventTime}>{event.venue || ''}</div>
-						<button onClick={() => window.open(event.link, '_blank')} className={`${styles.linkButton}`}>View Tickets/Venue</button>
+						{event.link && <button onClick={() => {
+							if (event.link) {
+								window.open(event.link, '_blank')
+							}
+						}}
+							className={`${styles.linkButton}`}>View Tickets/Venue</button>
+						}
 					</div>
 				)
 			})
@@ -105,18 +111,18 @@ const EventList = () => {
 	}, [slug])
 
 	return (
-		<>
+		<div>
 			<ArrowBackIcon className={styles.arrow} onClick={() => router.back()} style={{ color: 'lightgray', fontSize: '60px' }} />
 			<div className={styles.container}>
 				<header>
-					<h1><span className={styles.musicNote}>🎵</span>Events</h1>
+					<h1 className="text-neutral-300"><span className={styles.musicNote}>🎵</span>Events</h1>
 					<div className={styles.date} id="currentDate">{niceDate}</div>
 				</header>
 				<div className={styles.eventsContainer} id="eventsContainer">
 					{events && generateSortedEvents(events)}
 				</div>
 			</div>
-		</>
+		</div>
 	)
 };
 

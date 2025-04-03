@@ -223,7 +223,7 @@ export default function DesktopCalendar() {
 		event: types.MusicEvent & { start: Date; end: Date };
 	}) => (
 		<div
-			onClick={() => window.open(event.link, "_blank")}
+			onClick={() => { if (event.link) window.open(event.link, "_blank") }}
 			style={{ fontWeight: "bold", color: "lightgray" }}
 			className="custom-event"
 		>
