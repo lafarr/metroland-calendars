@@ -37,7 +37,7 @@ const MobileDropdown: React.FC<MobileDropdownProps> = ({ setSelectedOptions }) =
 	console.log('selected:')
 	console.log(selected)
 
-	function toggleOption(option) {
+	function toggleOption(option: string) {
 		if (!selected.includes(option)) {
 			setSelected([...selected, option]);
 		} else {
