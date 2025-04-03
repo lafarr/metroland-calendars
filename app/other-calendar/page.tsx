@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import {
 	ChevronLeft,
@@ -24,9 +24,66 @@ enum Categories {
 	comedy,
 	poetry,
 }
+interface MobileDropdownProps {
+	setSelectedOptions: Dispatch<SetStateAction<string[]>>;
+}
+
+// Use proper props destructuring with curly braces
+const MobileDropdown: React.FC<MobileDropdownProps> = ({ setSelectedOptions }) => {
+	const [selected, setSelected] = useState<string[]>([]);
+	const [isOpen, setIsOpen] = useState(false);
+	const options = ['visual arts', 'theater', 'film', 'comedy', 'poetry'];
+
+	console.log('selected:')
+	console.log(selected)
+
+	function toggleOption(option) {
+		if (!selected.includes(option)) {
+			setSelected([...selected, option]);
+		} else {
+			setSelected(selected.filter((val) => val !== option));
+		}
+	}
+
+	useEffect(() => {
+		setSelectedOptions(selected);
+	}, [selected])
+
+	return (
+		<div className="p-4 bg-[#2a2727]">
+			<div className="relative">
+				{/* Header/trigger */}
+				<div
+					onClick={() => setIsOpen(!isOpen)}
+					className="cursor-pointer border border-gray-300 rounded-md px-3 py-2 text-gray-300 flex justify-between items-center"
+				>
+					<span>{selected.length ? selected.join(', ') : 'Select options'}</span>
+					<span>{isOpen ? '▲' : '▼'}</span>
+				</div>
+
+				{/* Dropdown list */}
+				{isOpen && (
+					<div className="absolute left-0 right-0 mt-1 border border-gray-300 rounded-md bg-[#2a2727] z-10">
+						{options.map((option) => (
+							<div
+								key={option}
+								onClick={() => toggleOption(option)}
+								className={`px-3 py-2 cursor-pointer ${selected.includes(option) ? 'bg-[#faff00] text-black' : 'text-gray-300 hover:bg-gray-700'
+									}`}
+							>
+								{option}
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+		</div>
+	)
+}
 
 const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
-	const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+	const d = new Date()
+	const [selectedDate, setSelectedDate] = useState<Date>(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
 	const [weekDates, setWeekDates] = useState<Date[]>([]);
 	const [showAllEvents, setShowAllEvents] = useState<boolean>(false);
 	const [filteredEvents, setFilteredEvents] = useState<types.OtherEvent[]>([]);
@@ -34,6 +91,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	const [displayedEvents, setDisplayedEvents] = useState<types.OtherEvent[]>(
 		[],
 	);
+	const [filters, setFilters] = useState<string[]>([])
 
 	useEffect(() => {
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
@@ -72,11 +130,13 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 		}
 		const fEvents = tmp.filter(
 			(event: types.OtherEvent) =>
-				event.start <= selectedDate && event.end >= selectedDate,
+				event.start <= selectedDate && event.end >= selectedDate && (filters.includes(event.category.toLowerCase()) || filters.length === 0),
 		);
 		setFilteredEvents(fEvents);
+		console.log('events:');
+		console.log(fEvents)
 		setDisplayedEvents(showAllEvents ? fEvents : fEvents.slice(0, 4));
-	}, [selectedDate, showAllEvents]);
+	}, [selectedDate, showAllEvents, events, filters]);
 
 	useEffect(() => {
 		const dates = getWeekDates(selectedDate);
@@ -141,6 +201,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 					<ChevronRight className="w-6 h-6" />
 				</button>
 			</div>
+			<MobileDropdown setSelectedOptions={setFilters} />
 			<div className="p-4 text-center">
 				{displayedEvents?.map((event: types.OtherEvent) => (
 					<div key={event._id} className="mb-2 p-2">
