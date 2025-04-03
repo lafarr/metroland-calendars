@@ -8,6 +8,7 @@ import {
 	ChevronUp,
 	ChevronDown,
 	Search,
+	Loader2,
 } from "lucide-react";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -91,14 +92,19 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 	const [displayedEvents, setDisplayedEvents] = useState<types.OtherEvent[]>(
 		[],
 	);
+	const [loading, setLoading] = useState(false);
 	const [filters, setFilters] = useState<string[]>([])
 
 	useEffect(() => {
+		setLoading(true);
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
 			.then((response: Response) => {
 				if (response.ok) {
 					response.json()
-						.then((json: any) => setEvents(json.events));
+						.then((json: any) => {
+							setEvents(json.events)
+							setLoading(false);
+						});
 				}
 			});
 	}, []);
@@ -202,7 +208,11 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 				</button>
 			</div>
 			<MobileDropdown setSelectedOptions={setFilters} />
-			<div className="p-4 text-center">
+			{loading &&
+				<div className="flex justify-center items-center">
+					<Loader2 className="text-white animate-spin" />
+				</div>}
+			{!loading && <div className="p-4 text-center">
 				{displayedEvents?.map((event: types.OtherEvent) => (
 					<div key={event._id} className="mb-2 p-2">
 						<p className="font-semibold text-[#faff00]">
@@ -221,7 +231,7 @@ const MobileCalendar = ({ customClasses }: { customClasses: string }) => {
 						Show More
 					</button>
 				)}
-			</div>
+			</div>}
 		</div>
 	);
 };
