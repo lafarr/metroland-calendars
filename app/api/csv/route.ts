@@ -219,9 +219,11 @@ async function handleOtherEvents(
 			event[1].trim() !== "" && event[1].toLowerCase() !== "varies"
 				? event[1]
 				: startDate;
-		if (endDate.toLowerCase() === "n/a" || endDate.toLowerCase() == "") {
-			endDate = "1/1/2074";
+
+		if (endDate.toLowerCase() === "" || endDate.toLowerCase() === "n/a") {
+			endDate = startDate;
 		}
+
 		const newEvent = new OtherEvent({
 			title: event[3],
 			venue: event[4],
