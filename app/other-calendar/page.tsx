@@ -407,7 +407,18 @@ function DesktopCalendar({
 		fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/other-events`)
 			.then(async (response: Response) => {
 				const body = await response.json();
-				setEvents(body.events);
+				if (isEmbed) {
+					const mappings = new Map();
+					mappings.set("comedy", "comedy");
+					mappings.set("film", "film");
+					mappings.set("poetry", "poetry");
+					mappings.set("theater", "theater");
+					mappings.set("visualArts", "visual arts");
+					const category = searchParams.get("category");
+					setEvents(body.events.filter((ele: any) => ele.category.toLowerCase() === mappings.get(category)));
+				} else {
+					setEvents(body.events);
+				}
 			})
 			.catch((err) => console.log(err));
 
