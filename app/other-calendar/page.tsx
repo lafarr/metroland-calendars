@@ -413,7 +413,7 @@ function DesktopCalendar({
 					mappings.set("film", "film");
 					mappings.set("poetry", "poetry");
 					mappings.set("theater", "theater");
-					mappings.set("visualArts", "visual arts");
+					mappings.set("visualarts", "visual arts");
 					const category = searchParams.get("category");
 					setEvents(body.events.filter((ele: any) => ele.category.toLowerCase() === mappings.get(category)));
 				} else {
