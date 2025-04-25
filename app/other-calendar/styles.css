@@ -9,6 +9,8 @@
 
 .other-calendar .rbc-calendar {
 	height: 100%;
+	width: 100%;
+	/* Ensure calendar takes full available width */
 }
 
 .other-calendar .calendar-container {
@@ -76,8 +78,8 @@
 
 .other-calendar .rbc-day-bg {
 	border: 1px solid #faff00;
-	min-width: 120px;
-	/* Ensure cells are wide enough */
+	flex: 1 1 0;
+	/* Allow cells to shrink proportionally */
 }
 
 .other-calendar .left-column {
@@ -119,6 +121,20 @@
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.other-calendar .rbc-month-view {
+	width: 100%;
+	/* Ensure month view takes full available width */
+	display: flex;
+	flex-direction: column;
+}
+
+.other-calendar .rbc-row-bg {
+	display: flex;
+	flex-direction: row;
+	flex: 1 1 0;
+	/* Ensure row background scales with container */
+}
+
 .other-calendar .rbc-event {
 	background-color: #faff00 !important;
 	cursor: default !important;
@@ -126,36 +142,41 @@
 	overflow: hidden;
 	white-space: normal;
 	/* Allow text wrapping */
-	padding: 4px 6px;
-	/* Increase padding for better readability */
+	padding: 3px 4px;
+	/* Slightly reduced padding for smaller cells */
+	min-height: 20px;
+	/* Ensure events are visible even in small cells */
 }
 
 .other-calendar .rbc-event-content {
-	font-size: 12px;
-	line-height: 1.3;
+	font-size: 11px;
+	/* Slightly smaller font for smaller cells */
+	line-height: 1.2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 
-	overflow,
-	.other-calendar .rbc-show-more {
-		background: none !important;
-		cursor: default !important;
-		color: #3174ad;
-	}
+.other-calendar .rbc-show-more {
+	background: none !important;
+	cursor: default !important;
+	color: #3174ad;
+	font-size: 11px;
+}
 
-	.other-calendar .custom-event {
-		width: 100%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: normal;
-		/* Allow text wrapping */
-	}
+.other-calendar .custom-event {
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	/* Allow text wrapping */
+}
 
-	.other-calendar .custom-event a {
-		display: block;
-		width: 100%;
-		color: #000;
-		text-decoration: none;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: normal;
-	}
+.other-calendar .custom-event a {
+	display: block;
+	width: 100%;
+	color: #000;
+	text-decoration: none;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
 }
