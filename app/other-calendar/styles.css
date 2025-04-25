@@ -16,10 +16,8 @@
 	background-color: #2a2727;
 	padding: 20px;
 	display: flex;
-	overflow-x: hidden;
 	box-sizing: border-box;
 }
-
 
 .other-calendar .custom-toolbar {
 	display: flex;
@@ -41,7 +39,6 @@
 	left: 10px;
 	color: lightgray;
 	pointer-events: none;
-	/* Prevent the icon from blocking input interaction */
 }
 
 .other-calendar .search-input {
@@ -79,6 +76,8 @@
 
 .other-calendar .rbc-day-bg {
 	border: 1px solid #faff00;
+	min-width: 120px;
+	/* Ensure cells are wide enough */
 }
 
 .other-calendar .left-column {
@@ -90,9 +89,7 @@
 	padding: 22px;
 	border-radius: 15px;
 	height: 40%;
-	/* Adjust as needed */
 	width: 80px;
-	/* Set a fixed width */
 	margin: auto;
 }
 
@@ -105,7 +102,7 @@
 	align-items: center;
 	justify-content: center;
 	border-radius: 50%;
-	transition: all 0.other-calendar .3s ease;
+	transition: all 0.3s ease;
 	color: #faff00;
 	background-color: #333;
 }
@@ -119,15 +116,46 @@
 	height: 200px;
 	letter-spacing: 0px;
 	margin: 15px 0;
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.other-calendar .3);
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .other-calendar .rbc-event {
 	background-color: #faff00 !important;
 	cursor: default !important;
+	width: 100%;
+	overflow: hidden;
+	white-space: normal;
+	/* Allow text wrapping */
+	padding: 4px 6px;
+	/* Increase padding for better readability */
 }
 
-.other-calendar .rbc-show-more {
-	background: none !important;
-	cursor: default !important;
+.other-calendar .rbc-event-content {
+	font-size: 12px;
+	line-height: 1.3;
+
+	overflow,
+	.other-calendar .rbc-show-more {
+		background: none !important;
+		cursor: default !important;
+		color: #3174ad;
+	}
+
+	.other-calendar .custom-event {
+		width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: normal;
+		/* Allow text wrapping */
+	}
+
+	.other-calendar .custom-event a {
+		display: block;
+		width: 100%;
+		color: #000;
+		text-decoration: none;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: normal;
+	}
 }
