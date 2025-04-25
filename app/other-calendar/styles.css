@@ -111,8 +111,8 @@
 	color: #faff00;
 	font-size: 36px;
 	font-weight: bold;
-	writing-mode: vertical-rl;
-	transform: rotate(180deg);
+	"vertical-rl;
+ transform: rotate(180deg);
 	height: 200px;
 	letter-spacing: 0px;
 	margin: 15px 0;
